@@ -22,6 +22,9 @@ Use `--total` or `-t` to print another entry at the end that is sum of all other
 `--sort=field` or `-s field` to sort by a field (pass in wrong field name to get list of field names),
 add `--reverse` or `-r` to reverse the sort. Total is not sorted and always last.
 
+Use `--stdin-filelist` to pass list of files from stdin (like from running `find -type f` or similar)
+due to bash/shell saying argument list is too long to contain all your files.
+
 
 # File formats
 
