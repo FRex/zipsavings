@@ -31,14 +31,24 @@ fields = [
     Field('file_count', 'File count', lambda x: x),
 ]
 
-ArchiveInfo = namedtuple('ArchiveInfo', [f.name for f in fields])
+field_names = [f.name for f in fields]
+ArchiveInfo = namedtuple('ArchiveInfo', field_names)
 
-opts, files = gnu_getopt(sys.argv[1:], 't', ['total'])
+opts, files = gnu_getopt(sys.argv[1:], 'ts:r', ['total', 'sort=', 'reverse'])
 
 total = False
+sort_by_field = None
+reverse_sort = False
 
 for o, v in opts:
     if o in ['--total', '-t']: total = True
+    if o in ['--sort', '-s']: sort_by_field = v
+    if o in ['--reverse', '-r']: reverse_sort = True
+
+if sort_by_field is not None and sort_by_field not in field_names:
+    print(f"'{sort_by_field}' is not a valid field name to sort by", file=sys.stderr)
+    print("Try: " + ', '.join(field_names), file=sys.stderr)
+    sys.exit(1)
 
 archive_infos = []
 
@@ -72,6 +82,10 @@ for f in files:
         saved = unpacked - packed
         saved_percent = percent(unpacked, packed)
         archive_infos.append(ArchiveInfo(f, unpacked, packed, saved, saved_percent, file_count))
+
+if sort_by_field:
+    sort_field_index = field_names.index(sort_by_field)
+    archive_infos.sort(key=lambda x: x[sort_field_index], reverse=reverse_sort)
 
 if total:
     total_unpacked = 0
