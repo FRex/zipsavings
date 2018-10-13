@@ -1,4 +1,4 @@
-import re
+import os
 import sys
 from subprocess import Popen, PIPE
 from humanize import naturalsize
@@ -34,16 +34,18 @@ fields = [
 field_names = [f.name for f in fields]
 ArchiveInfo = namedtuple('ArchiveInfo', field_names)
 
-opts, files = gnu_getopt(sys.argv[1:], 'ts:r', ['total', 'sort=', 'reverse'])
+opts, files = gnu_getopt(sys.argv[1:], 'ts:r', ['total', 'sort=', 'reverse', '7zexe='])
 
 total = False
 sort_by_field = None
 reverse_sort = False
+new_7z_exe = None
 
 for o, v in opts:
     if o in ['--total', '-t']: total = True
     if o in ['--sort', '-s']: sort_by_field = v
     if o in ['--reverse', '-r']: reverse_sort = True
+    if o in ['--7zexe']: new_7z_exe = v
 
 if sort_by_field is not None and sort_by_field not in field_names:
     print(f"'{sort_by_field}' is not a valid field name to sort by", file=sys.stderr)
@@ -57,9 +59,10 @@ def percent(real, packed):
     saved = real - packed
     return round(100 * saved / real, 2)
 
+final_7z_exe = next(filter(None, [new_7z_exe, os.getenv('ZIPSAVINGS_7ZEXE'), 'C:/mybin/7z.exe']))
 
 for f in files:
-    args = ['C:/mybin/7z.exe', 'l', '--', f]
+    args = [final_7z_exe, 'l', '--', f]
     p = Popen(args, errors='replace', stdout=PIPE, stderr=PIPE, universal_newlines=True)
     x, y = p.communicate()
     if len(y) > 0:

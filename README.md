@@ -2,13 +2,25 @@
 `zipsavings` is a simple Python script that uses `subprocess.Popen`
 to invoke `7z l` on each given archive and print stats about it.
 
-I wrote it for personal use which shows (no documentation, ad-hoc code, hardcoded
-path to `7z.exe`, etc.) but I plan on improving it and make it more general
+I wrote it for personal use which shows (no documentation, ad-hoc code, etc.) but
+I plan on improving it and make it more general
 and usable by anyone as that (working as if I'm writing a general purpose tool
 for wide audience) is for me the easiest way to put quality and polish into it.
 
 If you plan on using it or use it then please let me know and/or star this project so
 that I know my work on making it usable by others is not in vain.
+
+
+# 7z exe
+
+Use `--7zexe=path` or set env var `ZIPSAVINGS_7ZEXE` to specify the `7z` exe.
+If both are missing the fallback is `C:/mybin/7z.exe` since that's where I keep mine.
+
+
+# Options
+Use `--total` or `-t` to print another entry at the end that is sum of all others,
+`--sort=field` or `-s field` to sort by a field (pass in wrong field name to get list of field names),
+add `--reverse` or `-r` to reverse the sort. Total is not sorted and always last.
 
 
 # File formats
