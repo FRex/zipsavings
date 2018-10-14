@@ -10,6 +10,10 @@ for wide audience) is for me the easiest way to put quality and polish into it.
 If you plan on using it or use it then please let me know and/or star this project so
 that I know my work on making it usable by others is not in vain.
 
+Note: 'unpacked' and 'packed' fields show sizes of data files themselves
+before and after packing, they don't take 'size on disk' into account
+for 'unpacked' nor headers/archive format overhead for 'packed'.
+
 
 # 7z exe
 
