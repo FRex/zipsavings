@@ -1,38 +1,12 @@
 import os
 import sys
 from subprocess import Popen, PIPE
-from humanize import naturalsize
 from getopt import gnu_getopt
 from collections import namedtuple
+from . import model
 
 
 if __name__ != '__main__': raise RuntimeError("This is a script, not a module.")
-
-def chunkinize(s, n):
-    s = s[::-1]
-    ret = [s[i:i+n][::-1] for i in range(0, len(s), n)]
-    return ' '.join(ret[::-1])
-
-def size(x):
-    nicebytes = chunkinize(str(abs(x)), 3)
-    if x < 0:
-        return f"-{naturalsize(-x, True)} (-{naturalsize(-x)}, -{nicebytes} bytes)"
-    else:
-        return f"{naturalsize(x, True)} ({naturalsize(x)}, {nicebytes} bytes)"
-
-Field = namedtuple('Field', 'name display_name pretty_print')
-
-fields = [
-    Field('archive', 'Archive', lambda x: x),
-    Field('unpacked', 'Unpacked', size),
-    Field('packed', 'Packed', size),
-    Field('saved', 'Saved', size),
-    Field('saved_percent', 'Saved %', lambda x: str(x) + '%'),
-    Field('file_count', 'File count', lambda x: x),
-]
-
-field_names = [f.name for f in fields]
-ArchiveInfo = namedtuple('ArchiveInfo', field_names)
 
 opts, files = gnu_getopt(sys.argv[1:], 'ts:r', ['total', 'sort=', 'reverse', '7zexe=', 'stdin-filelist'])
 
@@ -49,9 +23,9 @@ for o, v in opts:
     if o in ['--7zexe']: new_7z_exe = v
     if o in ['--stdin-filelist']: read_stdin_filelist = True
 
-if sort_by_field is not None and sort_by_field not in field_names:
+if sort_by_field is not None and sort_by_field not in model.ArchiveInfo._fields:
     print(f"'{sort_by_field}' is not a valid field name to sort by", file=sys.stderr)
-    print("Try: " + ', '.join(field_names), file=sys.stderr)
+    print("Try: " + ', '.join(model.ArchiveInfo._fields), file=sys.stderr)
     sys.exit(1)
 
 archive_infos = []
@@ -98,10 +72,10 @@ for file_group in split_into_portions(all_files, 8):
             file_count = int(parts[4].split(' ')[0])
             saved = unpacked - packed
             saved_percent = percent(unpacked, packed)
-            archive_infos.append(ArchiveInfo(f, unpacked, packed, saved, saved_percent, file_count))
+            archive_infos.append(model.ArchiveInfo(f, unpacked, packed, saved, saved_percent, file_count))
 
 if sort_by_field:
-    sort_field_index = field_names.index(sort_by_field)
+    sort_field_index = model.ArchiveInfo._fields.index(sort_by_field)
     archive_infos.sort(key=lambda x: x[sort_field_index], reverse=reverse_sort)
 
 if total:
@@ -116,9 +90,9 @@ if total:
         total_file_count += info.file_count
 
     total_saved_percent = percent(total_unpacked, total_packed)
-    archive_infos.append(ArchiveInfo('TOTAL', total_unpacked, total_packed, total_saved, total_saved_percent, total_file_count))
+    archive_infos.append(model.ArchiveInfo('TOTAL', total_unpacked, total_packed, total_saved, total_saved_percent, total_file_count))
 
 for info in archive_infos:
-    x = zip(info, [f.display_name for f in fields], [f.pretty_print for f in fields])
+    x = zip(info, [f.display_name for f in model.fields], [f.pretty_print for f in model.fields])
     y = ['{}: {}'.format(xx[1], xx[2](xx[0])) for xx in x] + ['']
     print('\n'.join(y))
