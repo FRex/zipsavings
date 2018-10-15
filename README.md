@@ -1,5 +1,5 @@
 # zipsavings
-`zipsavings` is a simple Python script that uses `subprocess.Popen`
+`zipsavings` is a simple Python script/module that uses `subprocess.Popen`
 to invoke `7z l` on each given archive and print stats about it.
 
 I wrote it for personal use which shows (no documentation, ad-hoc code, etc.) but
@@ -14,6 +14,15 @@ Note: 'unpacked' and 'packed' fields show sizes of data files themselves
 before and after packing, they don't take 'size on disk' into account
 for 'unpacked' nor headers/archive format overhead for 'packed'.
 
+Best way to run it is to zip up the `zipsavings` directory contents
+and run it directly with python or (to keep tinkering with it) via a help
+script placed in `PATH` like:
+
+```
+#!/bin/bash
+export PYTHONPATH='PATH_TO_THIS_REPO'
+python -B -m zipsavings "$@"
+```
 
 # 7z exe
 
