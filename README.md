@@ -2,7 +2,10 @@
 `zipsavings` is a simple Python script/module that uses `subprocess.Popen`
 to invoke `7z l` on each given archive and print stats about it.
 
-Requires `tablib` and a `7z` exe.
+Requires `tablib` (for pretty printing) and a `7z` exe (for actual archive analysis).
+
+Made on `Python 3.6.5 (v3.6.5:f59c0932b4, Mar 28 2018, 17:00:18) [MSC v.1900 64 bit (AMD64)] on win32`,
+might work on older versions too. If you need it for older version of Python 3 feel free to open an issue for it.
 
 I wrote it for personal use which shows (no documentation, ad-hoc code, etc.) but
 I plan on improving it and make it more general

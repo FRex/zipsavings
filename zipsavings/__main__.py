@@ -43,16 +43,19 @@ if read_stdin_filelist:
 def split_into_portions(data, most):
     return [data[i:i+most] for i in range(0, len(data), most)]
 
+error_count = 0
 for file_group in split_into_portions(all_files, 8):
     jobs = [run7.start_7z(f, exe7z=final_7z_exe) for f in file_group]
     for job in jobs:
         try:
             archive_infos.append(run7.join_7z(job))
         except RuntimeError as e:
+            error_count += 1
             print(e, file=sys.stderr)
 
-if len(archive_infos) != len(all_files):
-    print('END OF ERRORS\n', file=sys.stderr)
+if error_count > 0:
+    print(f'There were {error_count} errors.', file=sys.stderr)
+    print('END OF ERRORS.\n', file=sys.stderr)
 
 if sort_by_field:
     archive_infos.sort(key=lambda x: getattr(x, sort_by_field), reverse=reverse_sort)
