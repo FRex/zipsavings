@@ -78,19 +78,7 @@ if sort_by_field:
     sort_field_index = model.ArchiveInfo._fields.index(sort_by_field)
     archive_infos.sort(key=lambda x: x[sort_field_index], reverse=reverse_sort)
 
-if total:
-    total_unpacked = 0
-    total_packed = 0
-    total_saved = 0
-    total_file_count = 0
-    for info in archive_infos:
-        total_unpacked += info.unpacked
-        total_packed += info.packed
-        total_saved += info.saved
-        total_file_count += info.file_count
-
-    total_saved_percent = percent(total_unpacked, total_packed)
-    archive_infos.append(model.ArchiveInfo('TOTAL', total_unpacked, total_packed, total_saved, total_saved_percent, total_file_count))
+if total: archive_infos.append(model.sum_archive_infos(archive_infos))
 
 for info in archive_infos:
     x = zip(info, [f.display_name for f in model.fields], [f.pretty_print for f in model.fields])

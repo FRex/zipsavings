@@ -27,3 +27,22 @@ fields = [
 
 field_names = [f.name for f in fields]
 ArchiveInfo = namedtuple('ArchiveInfo', field_names)
+
+def percent(real, packed):
+    if real == 0: return 0
+    saved = real - packed
+    return round(100 * saved / real, 2)
+
+def sum_archive_infos(archive_infos):
+    total_unpacked = 0
+    total_packed = 0
+    total_saved = 0
+    total_file_count = 0
+    for info in archive_infos:
+        total_unpacked += info.unpacked
+        total_packed += info.packed
+        total_saved += info.saved
+        total_file_count += info.file_count
+
+    total_saved_percent = percent(total_unpacked, total_packed)
+    return ArchiveInfo('TOTAL', total_unpacked, total_packed, total_saved, total_saved_percent, total_file_count)
