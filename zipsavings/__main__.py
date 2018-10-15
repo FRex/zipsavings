@@ -50,7 +50,10 @@ for file_group in split_into_portions(all_files, 8):
         try:
             archive_infos.append(run7.join_7z(job))
         except RuntimeError as e:
-            print(e)
+            print(e, file=sys.stderr)
+
+if len(archive_infos) != len(all_files):
+    print('END OF ERRORS\n\n', file=sys.stderr)
 
 if sort_by_field:
     archive_infos.sort(key=lambda x: getattr(x, sort_by_field), reverse=reverse_sort)
