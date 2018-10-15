@@ -23,7 +23,8 @@ def sum_archive_infos(archive_infos):
     return ArchiveInfo('TOTAL', total_unpacked, total_packed, total_saved, total_saved_percent, total_file_count)
 
 def binary_size(x):
-    if x == 0: return '0 Bytes'
+    if x == 1: return "1 Byte"
+    if x == -1: return "-1 Byte"
     if abs(x) < 1024: return f"{x} Bytes"
     UNIT = (None, 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB')
     i = 0
