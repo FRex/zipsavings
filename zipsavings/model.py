@@ -14,19 +14,7 @@ def size(x):
     else:
         return f"{naturalsize(x, True)} ({naturalsize(x)}, {nicebytes} bytes)"
 
-Field = namedtuple('Field', 'name display_name pretty_print')
-
-fields = [
-    Field('archive', 'Archive', lambda x: x),
-    Field('unpacked', 'Unpacked', size),
-    Field('packed', 'Packed', size),
-    Field('saved', 'Saved', size),
-    Field('saved_percent', 'Saved %', lambda x: str(x) + '%'),
-    Field('file_count', 'File count', lambda x: x),
-]
-
-field_names = [f.name for f in fields]
-ArchiveInfo = namedtuple('ArchiveInfo', field_names)
+ArchiveInfo = namedtuple('ArchiveInfo', 'archive unpacked packed saved saved_percent file_count')
 
 def percent(real, packed):
     if real == 0: return 0
@@ -46,3 +34,16 @@ def sum_archive_infos(archive_infos):
 
     total_saved_percent = percent(total_unpacked, total_packed)
     return ArchiveInfo('TOTAL', total_unpacked, total_packed, total_saved, total_saved_percent, total_file_count)
+
+
+def binary_size(x):
+    return '-' + naturalsize(-x, True) if x < 0 else naturalsize(x, True)
+
+def pretty_print_info_fields(info):
+    archive = info.archive
+    unpacked = binary_size(info.unpacked)
+    packed = binary_size(info.packed)
+    saved = binary_size(info.saved)
+    saved_percent = str(info.saved_percent) + '%'
+    file_count = info.file_count
+    return ArchiveInfo(archive, unpacked, packed, saved, saved_percent, file_count)

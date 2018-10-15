@@ -2,6 +2,8 @@
 `zipsavings` is a simple Python script/module that uses `subprocess.Popen`
 to invoke `7z l` on each given archive and print stats about it.
 
+Requires packages `humanize` and `tablib`, and a `7z` exe.
+
 I wrote it for personal use which shows (no documentation, ad-hoc code, etc.) but
 I plan on improving it and make it more general
 and usable by anyone as that (working as if I'm writing a general purpose tool
@@ -63,18 +65,19 @@ even on top ultra 7zip settings or compressing with `7z` already compressed vide
 # Example usage
 
 ```
-$ python zipsavings.py snek.7z  cmake-3.12.1-win64-x64.7z
-Archive: snek.7z
-Unpacked: 1.4 MiB (1.5 MB, 1 465 984 bytes)
-Packed: 484.4 KiB (496.0 kB, 496 040 bytes)
-Saved: 947.2 KiB (969.9 kB, 969 944 bytes)
-Saved %: 66.16%
-File count: 6
+$ python -m zipsavings test/* -t -s file_count -r
+ERROR: test/a.bz2 : No size data in bzip2 format.
+ERROR: test/b.notarchive : Can not open the file as archive.
+ERROR: test/wat.txt.bz2 : No size data in bzip2 format.
+END OF ERRORS
 
-Archive: cmake-3.12.1-win64-x64.7z
-Unpacked: 18.3 MiB (19.2 MB, 19 168 763 bytes)
-Packed: 16.8 MiB (17.6 MB, 17 615 868 bytes)
-Saved: 1.5 MiB (1.6 MB, 1 552 895 bytes)
-Saved %: 8.1%
-File count: 1
+archive                       |unpacked|packed   |saved     |saved_percent|file_count
+------------------------------|--------|---------|----------|-------------|----------
+test/NorthBuryGrove.rar       |2.2 GiB |966.2 MiB|1.2 GiB   |56.55%       |198
+test/windirstat1_1_2_setup.exe|2.2 MiB |591.6 KiB|1.6 MiB   |73.24%       |23
+test/snek.7z                  |1.4 MiB |484.4 KiB|947.2 KiB |66.16%       |6
+test/x.tar                    |54 Bytes|1.0 KiB  |-970 Bytes|-1796.3%     |2
+test/d.gz                     |0 Bytes |22 Bytes |-22 Bytes |0%           |1
+test/wat.txt.gz               |1.0 MiB |1.0 MiB  |-186 Bytes|-0.02%       |1
+TOTAL                         |2.2 GiB |968.2 MiB|1.2 GiB   |56.55%       |231
 ```

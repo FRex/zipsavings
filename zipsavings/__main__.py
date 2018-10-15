@@ -1,8 +1,7 @@
 import os
 import sys
-from subprocess import Popen, PIPE
+import tablib
 from getopt import gnu_getopt
-from collections import namedtuple
 from . import model, run7
 
 
@@ -53,7 +52,7 @@ for file_group in split_into_portions(all_files, 8):
             print(e, file=sys.stderr)
 
 if len(archive_infos) != len(all_files):
-    print('END OF ERRORS\n\n', file=sys.stderr)
+    print('END OF ERRORS\n', file=sys.stderr)
 
 if sort_by_field:
     archive_infos.sort(key=lambda x: getattr(x, sort_by_field), reverse=reverse_sort)
@@ -61,7 +60,6 @@ if sort_by_field:
 if total:
     archive_infos.append(model.sum_archive_infos(archive_infos))
 
-for info in archive_infos:
-    x = zip(info, [f.display_name for f in model.fields], [f.pretty_print for f in model.fields])
-    y = ['{}: {}'.format(xx[1], xx[2](xx[0])) for xx in x] + ['']
-    print('\n'.join(y))
+table = tablib.Dataset(headers=model.ArchiveInfo._fields)
+for info in archive_infos: table.append(model.pretty_print_info_fields(info))
+print(table)
