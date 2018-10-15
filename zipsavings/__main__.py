@@ -49,30 +49,34 @@ def start_7z_job(fname):
     args = [final_7z_exe, 'l', '--', fname]
     return Popen(args, errors='replace', stdout=PIPE, stderr=PIPE, universal_newlines=True)
 
+def parse_7z_result(output):
+    lines = [l for l in output.split('\n') if l and not l.startswith('Warnings:')]
+    info_line = lines[-1]
+    dash_line = lines[-2]
+    spaces = [i for i in range(len(dash_line)) if dash_line[i] == ' ']
+    runs = zip([-1] + spaces, spaces + [len(dash_line)])
+    parts = [info_line[1+run[0]:run[1]] for run in runs]
+    parts = filter(None, parts)
+    parts = list(map(str.strip, parts))
+    if parts[2] == '': raise RuntimeError(f"{f}: no uncompressed size info")
+    unpacked = int(parts[2])
+    packed = int(parts[3])
+    file_count = int(parts[4].split(' ')[0])
+    saved = unpacked - packed
+    saved_percent = percent(unpacked, packed)
+    return model.ArchiveInfo(f, unpacked, packed, saved, saved_percent, file_count)
+
 for file_group in split_into_portions(all_files, 8):
     jobs = [(start_7z_job(f), f) for f in file_group]
     for p, f in jobs:
-        x, y = p.communicate()
+        output, y = p.communicate()
         if len(y) > 0:
             print(y, file=sys.stderr)
         else:
-            lines = [l for l in x.split('\n') if len(l) > 0 and not l.startswith('Warnings:')]
-            info_line = lines[-1]
-            dash_line = lines[-2]
-            spaces = [i for i in range(len(dash_line)) if dash_line[i] == ' ']
-            runs = zip([-1] + spaces, spaces + [len(dash_line)])
-            parts = [info_line[1+run[0]:run[1]] for run in runs]
-            parts = filter(None, parts)
-            parts = list(map(str.strip, parts))
-            if parts[2] == '':
-                print(f"{f}: no uncompressed size info\n", file=sys.stderr)
-                continue
-            unpacked = int(parts[2])
-            packed = int(parts[3])
-            file_count = int(parts[4].split(' ')[0])
-            saved = unpacked - packed
-            saved_percent = percent(unpacked, packed)
-            archive_infos.append(model.ArchiveInfo(f, unpacked, packed, saved, saved_percent, file_count))
+            try:
+                archive_infos.append(parse_7z_result(output))
+            except RuntimeError as e:
+                print(e)
 
 if sort_by_field: archive_infos.sort(key=lambda x: getattr(x, sort_by_field), reverse=reverse_sort)
 
