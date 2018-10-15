@@ -74,9 +74,7 @@ for file_group in split_into_portions(all_files, 8):
             saved_percent = percent(unpacked, packed)
             archive_infos.append(model.ArchiveInfo(f, unpacked, packed, saved, saved_percent, file_count))
 
-if sort_by_field:
-    sort_field_index = model.ArchiveInfo._fields.index(sort_by_field)
-    archive_infos.sort(key=lambda x: x[sort_field_index], reverse=reverse_sort)
+if sort_by_field: archive_infos.sort(key=lambda x: getattr(x, sort_by_field), reverse=reverse_sort)
 
 if total: archive_infos.append(model.sum_archive_infos(archive_infos))
 
