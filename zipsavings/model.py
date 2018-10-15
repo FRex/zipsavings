@@ -1,20 +1,7 @@
 from collections import namedtuple
-from humanize import naturalsize
 
 
-def chunkinize(s, n):
-    s = s[::-1]
-    ret = [s[i:i+n][::-1] for i in range(0, len(s), n)]
-    return ' '.join(ret[::-1])
-
-def size(x):
-    nicebytes = chunkinize(str(abs(x)), 3)
-    if x < 0:
-        return f"-{naturalsize(-x, True)} (-{naturalsize(-x)}, -{nicebytes} bytes)"
-    else:
-        return f"{naturalsize(x, True)} ({naturalsize(x)}, {nicebytes} bytes)"
-
-ArchiveInfo = namedtuple('ArchiveInfo', 'archive unpacked packed saved saved_percent file_count')
+ArchiveInfo = namedtuple('ArchiveInfo', 'archive, unpacked, packed, saved, saved_percent, file_count')
 
 def percent(real, packed):
     if real == 0: return 0
@@ -35,9 +22,19 @@ def sum_archive_infos(archive_infos):
     total_saved_percent = percent(total_unpacked, total_packed)
     return ArchiveInfo('TOTAL', total_unpacked, total_packed, total_saved, total_saved_percent, total_file_count)
 
-
 def binary_size(x):
-    return '-' + naturalsize(-x, True) if x < 0 else naturalsize(x, True)
+    if x == 0: return '0 Bytes'
+    if abs(x) < 1024: return f"{x} Bytes"
+    UNIT = (None, 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB')
+    i = 0
+    n = abs(x)
+    while n >= 1024:
+        n //= 1024
+        i += 1
+    sign = '-' if x < 0 else ''
+    divisor = 1024 ** i
+    rest = abs(x) - n * divisor
+    return f"{sign}{round(n + rest / divisor, 1)} {UNIT[i]}"
 
 def pretty_print_info_fields(info):
     archive = info.archive
