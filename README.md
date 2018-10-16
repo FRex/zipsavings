@@ -56,11 +56,9 @@ but simple compression layers around single file, just usually used with `tar`) 
 In case of `bzip2` (another compression often used with `tar`) an error will be
 printed as `compressed` column in `7z l` output is empty.
 
-It doesn't unpack the archive (and won't in the future as that'd be way too prohibitive with
-regards to CPU and disk access) nor looks at filenames (yet, but maybe later) to warn
-about possible archive-in-archive scenario (like compressing `exe` NSIS installer that
-already has 30-80% compression into a `7z` which will look like marginal 1-5% gain
-even on top ultra 7zip settings or compressing with `7z` already compressed video and audio formats).
+It doesn't unpack the archive nor looks at filenames to warn about possible
+archive-in-archive scenarios that will make savings look really small (because
+the real savings are in inner archives, not the outer one that this tool analyzes).
 
 
 # Example usage
