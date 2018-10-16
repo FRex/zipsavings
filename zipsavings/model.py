@@ -1,7 +1,7 @@
 from collections import namedtuple
 
 
-ArchiveInfo = namedtuple('ArchiveInfo', 'archive, unpacked, packed, saved, saved_percent, file_count')
+ArchiveInfo = namedtuple('ArchiveInfo', 'archive, unpacked, packed, saved, saved_percent, file_count, type')
 
 def percent(real, packed):
     if real == 0: return 0
@@ -20,7 +20,7 @@ def sum_archive_infos(archive_infos):
         total_file_count += info.file_count
 
     total_saved_percent = percent(total_unpacked, total_packed)
-    return ArchiveInfo('TOTAL', total_unpacked, total_packed, total_saved, total_saved_percent, total_file_count)
+    return ArchiveInfo('TOTAL', total_unpacked, total_packed, total_saved, total_saved_percent, total_file_count, 'SUM')
 
 def binary_size(x):
     if x == 1: return "1 Byte"
@@ -44,4 +44,5 @@ def pretty_print_info_fields(info):
     saved = binary_size(info.saved)
     saved_percent = str(info.saved_percent) + '%'
     file_count = info.file_count
-    return ArchiveInfo(archive, unpacked, packed, saved, saved_percent, file_count)
+    atype = info.type
+    return ArchiveInfo(archive, unpacked, packed, saved, saved_percent, file_count, atype)

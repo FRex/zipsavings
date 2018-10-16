@@ -15,7 +15,7 @@ def get_type_from_output_lines(lines):
     for line in lines[i:]:
         if line.startswith('Type = '):
             return line[len('Type = '):]
-    return 'TYPE-MISSING'
+    return '???'
 
 def parse_7z_result(output, fname):
     lines = [l for l in output.split('\n') if l and not l.startswith('Warnings:')]
@@ -33,7 +33,7 @@ def parse_7z_result(output, fname):
     file_count = int(parts[4].split(' ')[0])
     saved = unpacked - packed
     saved_percent = percent(unpacked, packed)
-    return model.ArchiveInfo(fname, unpacked, packed, saved, saved_percent, file_count)
+    return model.ArchiveInfo(fname, unpacked, packed, saved, saved_percent, file_count, archive_type)
 
 def adjust_error_string(stderr):
     lines = list(filter(None, stderr.split('\n')))
