@@ -6,7 +6,7 @@ ArchiveInfo = namedtuple('ArchiveInfo', 'archive, unpacked, packed, saved, saved
 def percent(real, packed):
     if real == 0: return 0
     saved = real - packed
-    return round(100 * saved / real, 2)
+    return 100 * saved / real
 
 def sum_archive_infos(archive_infos):
     total_unpacked = 0
@@ -44,7 +44,7 @@ def pretty_print_info_fields(info):
     unpacked = binary_size(info.unpacked)
     packed = binary_size(info.packed)
     saved = binary_size(info.saved)
-    saved_percent = str(info.saved_percent) + '%'
+    saved_percent = str(round(info.saved_percent, 2)) + '%'
     file_count = info.file_count
     atype = info.type
     size = binary_size(info.size)

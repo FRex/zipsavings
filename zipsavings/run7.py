@@ -1,10 +1,6 @@
 from subprocess import Popen, PIPE
 from . import model
 
-def percent(real, packed):
-    if real == 0: return 0
-    saved = real - packed
-    return round(100 * saved / real, 2)
 
 def start_7z(fname, exe7z):
     args = [exe7z, 'l', '--', fname]
@@ -38,7 +34,7 @@ def parse_7z_result(output, fname):
     packed = int(parts[3])
     file_count = int(parts[4].split(' ')[0])
     saved = unpacked - packed
-    saved_percent = percent(unpacked, packed)
+    saved_percent = model.percent(unpacked, packed)
     return model.ArchiveInfo(fname, unpacked, packed, saved, saved_percent, file_count, archive_type, size)
 
 def adjust_error_string(stderr):

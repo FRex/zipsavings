@@ -31,11 +31,6 @@ if sort_by_field is not None and sort_by_field not in model.ArchiveInfo._fields:
 
 archive_infos = []
 
-def percent(real, packed):
-    if real == 0: return 0
-    saved = real - packed
-    return round(100 * saved / real, 2)
-
 final_7z_exe = next(filter(None, [new_7z_exe, os.getenv('ZIPSAVINGS_7ZEXE'), 'C:/mybin/7z.exe']))
 
 all_files = files
