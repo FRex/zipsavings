@@ -1,8 +1,7 @@
 import os
 import sys
-import tablib
 from getopt import gnu_getopt
-from . import model, run7
+from . import model, run7, table
 
 
 if __name__ != '__main__': raise RuntimeError("This is a script, not a module.")
@@ -63,6 +62,6 @@ if sort_by_field:
 if total:
     archive_infos.append(model.sum_archive_infos(archive_infos))
 
-table = tablib.Dataset(headers=model.ArchiveInfo._fields)
-for info in archive_infos: table.append(model.pretty_print_info_fields(info))
-print(table)
+infos = [model.pretty_print_info_fields(info) for info in archive_infos]
+headers = model.ArchiveInfo._fields
+print(table.pretty_print_table(infos, headers))
