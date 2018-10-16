@@ -85,3 +85,38 @@ test/d.gz                              |0 Bytes  |22 Bytes |-22 Bytes |0%       
 test/wat.txt.gz                        |1.0 MiB  |1.0 MiB  |-186 Bytes|-0.02%       |1         |gzip|1.0 MiB
 TOTAL                                  |4.0 GiB  |2.7 GiB  |1.2 GiB   |31.11%       |823       |SUM |2.6 GiB
 ```
+
+# Efficiency
+
+Despite using lots of unoptimized list, tuple and string happy Python 3 code this tool's main
+bottleneck is actual disk access and starting and running `7z` processes themselves (one for each archive given).
+
+All of the timings below are from repeated runs on a quad core (8 thread) Intel CPU on a laptop
+with plenty free RAM (for OS to cache into) with `7z.exe` and Python 3 on an SSD and archives and this tool's code on an HDD.
+
+Running with more cores or without OS caching the exes, code and archives into RAM will give different results
+but the point of `7z` being the bottleneck and Python code being irrelevant still stands.
+
+The above 8 analyzable archives among 11 files takes literally no time to run:
+
+```
+$ python -m zipsavings test/* -t -s file_count -r --time  2>&1 | tail -n 1
+Processed 8 files out of 11 given in 0.06281304359436035 seconds.
+```
+
+Running it on a very large list of files (MiKTex local package repo) show that `7z` is the real bottleneck:
+
+```
+$ find D:/MiKTexDownloadFiles -type f | python -m zipsavings --stdin-filelist -t -s file_count -r --time 2>&1 | tail -n 1
+Processed 3463 files out of 3530 given in 15.60750675201416 seconds.
+```
+
+Changing code to run and wait for 1 `7z` process at a time (by
+changing `for file_group in split_into_portions(all_files, 8):` to `for file_group in split_into_portions(all_files, 1):`)
+causes the tool to take predictably longer:
+
+```
+$ find D:/MiKTexDownloadFiles -type f  | python -m zipsavings --stdin-filelist -t -s file_count -r  --time 2>&1 | tail
+-n 1
+Processed 3463 files out of 3530 given in 50.39897918701172 seconds.
+```
