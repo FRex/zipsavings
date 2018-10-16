@@ -17,9 +17,15 @@ def get_type_from_output_lines(lines):
             return line[len('Type = '):]
     return '???'
 
+def get_size_from_output_lines(lines):
+    i = lines.index('Scanning the drive for archives:')
+    x = lines[i + 1].split(',')[1].strip().split()[0]
+    return int(x)
+
 def parse_7z_result(output, fname):
     lines = [l for l in output.split('\n') if l and not l.startswith('Warnings:')]
     archive_type = get_type_from_output_lines(lines)
+    size = get_size_from_output_lines(lines)
     info_line = lines[-1]
     dash_line = lines[-2]
     spaces = [i for i in range(len(dash_line)) if dash_line[i] == ' ']
@@ -33,7 +39,7 @@ def parse_7z_result(output, fname):
     file_count = int(parts[4].split(' ')[0])
     saved = unpacked - packed
     saved_percent = percent(unpacked, packed)
-    return model.ArchiveInfo(fname, unpacked, packed, saved, saved_percent, file_count, archive_type)
+    return model.ArchiveInfo(fname, unpacked, packed, saved, saved_percent, file_count, archive_type, size)
 
 def adjust_error_string(stderr):
     lines = list(filter(None, stderr.split('\n')))
