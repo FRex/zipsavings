@@ -20,7 +20,7 @@ def get_size_from_output_lines(lines):
 
 def is_directory_output_lines(lines):
     i = lines.index('Scanning the drive for archives:')
-    return ' folder,' in lines[i + 1]
+    return ' folder,' in lines[i + 1] or ' folders,' in lines[i + 1]
 
 def parse_7z_result(output, fname):
     lines = [l for l in output.split('\n') if l and not l.startswith('Warnings:')]
