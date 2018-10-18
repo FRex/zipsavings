@@ -24,7 +24,6 @@ def is_directory_output_lines(lines):
 
 def parse_7z_result(output, fname):
     lines = [l for l in output.split('\n') if l and not l.startswith('Warnings:')]
-    if is_directory_output_lines(lines): raise RuntimeError(f"ERROR: {fname} : A directory.")
     archive_type = get_type_from_output_lines(lines)
     size = get_size_from_output_lines(lines)
     info_line = lines[-1]
@@ -52,5 +51,8 @@ def adjust_error_string(stderr):
 
 def join_7z(job):
     stdout, stderr = job.communicate()
+    fname = job.args[-1]
+    #check dir first to prevent printing stderr about bad files found in a dir
+    if is_directory_output_lines(stdout.split('\n')): raise RuntimeError(f"ERROR: {fname} : A directory.")
     if len(stderr) > 0: raise RuntimeError(adjust_error_string(stderr))
-    return parse_7z_result(stdout, job.args[-1])
+    return parse_7z_result(stdout, fname)
