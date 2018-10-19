@@ -42,10 +42,10 @@ def split_into_portions(data, most):
 
 error_count = 0
 for file_group in split_into_portions(all_files, 8):
-    jobs = [run7.start_7z(f, exe7z=final_7z_exe) for f in file_group]
+    jobs = [run7.make_job(f, exe7z=final_7z_exe) for f in file_group]
     for job in jobs:
         try:
-            archive_infos.append(run7.join_7z(job))
+            archive_infos.append(job.join())
         except RuntimeError as e:
             error_count += 1
             print(e, file=sys.stderr)

@@ -1,10 +1,7 @@
+import os.path
 from subprocess import Popen, PIPE
 from . import model
 
-
-def start_7z(fname, exe7z):
-    args = [exe7z, 'l', '--', fname]
-    return Popen(args, errors='replace', stdout=PIPE, stderr=PIPE, universal_newlines=True)
 
 def get_type_from_output_lines(lines):
     i = lines.index('--')
@@ -49,10 +46,27 @@ def adjust_error_string(stderr):
     if ret.endswith(': Can not open the file as archive'): ret += '.'
     return ret.replace('\\', '/')
 
-def join_7z(job):
-    stdout, stderr = job.communicate()
-    fname = job.args[-1]
-    #check dir first to prevent printing stderr about bad files found in a dir
-    if is_directory_output_lines(stdout.split('\n')): raise RuntimeError(f"ERROR: {fname} : A directory.")
-    if len(stderr) > 0: raise RuntimeError(adjust_error_string(stderr))
-    return parse_7z_result(stdout, fname)
+class ErrorJob:
+    def __init__(self, message):
+        self.message = message
+
+    def join(self):
+        raise RuntimeError(self.message)
+
+class SevenJob:
+    def __init__(self, args):
+        self.args = args
+        self.job = Popen(args, errors='replace', stdout=PIPE, stderr=PIPE, universal_newlines=True)
+
+    def join(self):
+        stdout, stderr = self.job.communicate()
+        fname = self.args[-1]
+        #check dir first to prevent printing stderr about bad files found in a dir
+        #despite check in start7z this is here just in case
+        if is_directory_output_lines(stdout.split('\n')): raise RuntimeError(f"ERROR: {fname} : A directory.")
+        if len(stderr) > 0: raise RuntimeError(adjust_error_string(stderr))
+        return parse_7z_result(stdout, fname)
+
+def make_job(fname, exe7z):
+    if os.path.isdir(fname): return ErrorJob(f"ERROR: {fname} : A directory.")
+    return SevenJob([exe7z, 'l', '--', fname])
