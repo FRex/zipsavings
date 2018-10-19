@@ -1,5 +1,6 @@
 import os
 import sys
+import argparse
 from time import time
 from getopt import gnu_getopt
 from . import model, run7, table
@@ -7,41 +8,28 @@ from . import model, run7, table
 
 if __name__ != '__main__': raise RuntimeError("This is a script, not a module.")
 
-opts, files = gnu_getopt(sys.argv[1:], 'ts:r', ['total', 'sort=', 'reverse', '7zexe=', 'stdin-filelist', 'time'])
+par = argparse.ArgumentParser('zipsavings')
+par.add_argument('-t', '--total', action='store_true', help='sum the files')
+par.add_argument('-s', '--sort', action='store', help='sort by given field', choices=model.ArchiveInfo._fields)
+par.add_argument('-r', '--reverse', action='store_true', help='reverse the sort')
+par.add_argument('--exe-7z', action='store', help='specify 7z executable to use')
+par.add_argument('--stdin-filelist', action='store_true', help='read lines from stdin as filenames')
+par.add_argument('--time', action='store_const', const=time(), help='print runtime in seconds to stderr at the end')
+par.add_argument('files', metavar='file', nargs='*', help='archive to scan')
+opts = par.parse_args()
 
-total = False
-sort_by_field = None
-reverse_sort = False
-new_7z_exe = None
-read_stdin_filelist = False
-start_time = None
+final_7z_exe = next(filter(None, [opts.exe_7z, os.getenv('ZIPSAVINGS_7ZEXE'), 'C:/mybin/7z.exe']))
+files = list(opts.files)
 
-for o, v in opts:
-    if o in ['--total', '-t']: total = True
-    if o in ['--sort', '-s']: sort_by_field = v
-    if o in ['--reverse', '-r']: reverse_sort = True
-    if o in ['--7zexe']: new_7z_exe = v
-    if o in ['--stdin-filelist']: read_stdin_filelist = True
-    if o in ['--time']: start_time = time()
-
-if sort_by_field is not None and sort_by_field not in model.ArchiveInfo._fields:
-    print(f"'{sort_by_field}' is not a valid field name to sort by", file=sys.stderr)
-    print("Try: " + ', '.join(model.ArchiveInfo._fields), file=sys.stderr)
-    sys.exit(1)
-
-archive_infos = []
-
-final_7z_exe = next(filter(None, [new_7z_exe, os.getenv('ZIPSAVINGS_7ZEXE'), 'C:/mybin/7z.exe']))
-
-all_files = files
-if read_stdin_filelist:
-    all_files = files + [l for l in sys.stdin.read().split('\n') if l]
+if opts.stdin_filelist:
+    files.extend([l for l in sys.stdin.read().split('\n') if l])
 
 def split_into_portions(data, most):
     return [data[i:i+most] for i in range(0, len(data), most)]
 
+archive_infos = []
 error_count = 0
-for file_group in split_into_portions(all_files, 8):
+for file_group in split_into_portions(files, 8):
     jobs = [run7.make_job(f, exe7z=final_7z_exe) for f in file_group]
     for job in jobs:
         try:
@@ -55,16 +43,17 @@ if error_count > 0:
     print(f'There were {error_count} errors.', file=sys.stderr)
     print('END OF ERRORS.\n', file=sys.stderr)
 
-if sort_by_field:
-    archive_infos.sort(key=lambda x: getattr(x, sort_by_field), reverse=reverse_sort)
+if opts.sort:
+    archive_infos.sort(key=lambda x: getattr(x, opts.sort), reverse=opts.reverse)
 
-if total:
+if opts.total:
     archive_infos.append(model.sum_archive_infos(archive_infos))
 
 infos = [model.pretty_print_info_fields(info) for info in archive_infos]
 headers = model.ArchiveInfo._fields
 print(table.pretty_print_table(infos, headers))
 
-if start_time is not None:
+if opts.time is not None:
+    start_time = opts.time
     end_time = time()
-    print(f"Processed {good_count} files out of {len(all_files)} given in {end_time - start_time} seconds.", file=sys.stderr)
+    print(f"Processed {good_count} files out of {len(files)} given in {end_time - start_time} seconds.", file=sys.stderr)
