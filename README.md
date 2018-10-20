@@ -66,11 +66,12 @@ the real savings are in inner archives, not the outer one that this tool analyze
 # Example usage
 
 ```
-$ python -m zipsavings test/* -t -s file_count -r
+$ python -m zipsavings --list-dir test --total --sort file_count --reverse
 ERROR: test/a.bz2 : No size data in bzip2 format.
 ERROR: test/b.notarchive : Can not open the file as archive.
+ERROR: test/dracula.txt : Can not open the file as archive.
 ERROR: test/wat.txt.bz2 : No size data in bzip2 format.
-There were 3 errors.
+There were 4 errors.
 END OF ERRORS.
 
 archive                                |unpacked |packed   |saved     |saved_percent|file_count|type|size
@@ -82,8 +83,11 @@ test/windirstat1_1_2_setup.exe         |2.2 MiB  |591.6 KiB|1.6 MiB   |73.24%   
 test/snek.7z                           |1.4 MiB  |484.4 KiB|947.2 KiB |66.16%       |6         |7z  |484.8 KiB
 test/x.tar                             |54 Bytes |1.0 KiB  |-970 Bytes|-1796.3%     |2         |tar |10.0 KiB
 test/d.gz                              |0 Bytes  |22 Bytes |-22 Bytes |0%           |1         |gzip|22 Bytes
+test/dracula.7z                        |846.9 KiB|268.2 KiB|578.6 KiB |68.32%       |1         |7z  |268.4 KiB
+test/dracula.zip                       |846.9 KiB|310.4 KiB|536.4 KiB |63.34%       |1         |zip |310.6 KiB
 test/wat.txt.gz                        |1.0 MiB  |1.0 MiB  |-186 Bytes|-0.02%       |1         |gzip|1.0 MiB
-TOTAL                                  |4.0 GiB  |2.7 GiB  |1.2 GiB   |31.11%       |823       |SUM |2.6 GiB
+---------------------------------------|---------|---------|----------|-------------|----------|----|---------
+TOTAL                                  |4.0 GiB  |2.7 GiB  |1.2 GiB   |31.12%       |825       |SUM |2.6 GiB
 ```
 
 # Efficiency
