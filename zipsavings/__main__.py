@@ -17,13 +17,14 @@ par.add_argument('--stdin-filelist', action='store_true', help='read lines from 
 par.add_argument('--time', action='store_const', const=time(), help='print runtime in seconds to stderr at the end')
 par.add_argument('files', metavar='file', nargs='*', help='archive to scan')
 par.add_argument('--list-dir', action='append', default=[], dest='list_dirs', help='list dir for files')
+par.add_argument('--filelist', action='append', default=[], dest='filelists', help='files to read as lists of files to scan')
 opts = par.parse_args()
 
 final_7z_exe = next(filter(None, [opts.exe_7z, os.getenv('ZIPSAVINGS_7ZEXE'), 'C:/mybin/7z.exe']))
 files = list(opts.files)
 
 if opts.stdin_filelist:
-    files.extend([l for l in sys.stdin.read().split('\n') if l])
+    files.extend(filter(None, sys.stdin.read().splitlines()))
 
 error_count = 0
 for d in opts.list_dirs:
@@ -32,6 +33,14 @@ for d in opts.list_dirs:
     else:
         error_count += 1
         print(f"ERROR: {d} : Tried to list a non-dir.", file=sys.stderr)
+
+for f in opts.filelists:
+    try:
+        with open(f, 'r') as f:
+            files.extend(filter(None, f.read().splitlines()))
+    except FileNotFoundError as e:
+        error_count += 1
+        print(f"ERROR: {f} : Filelist file not found.", file=sys.stderr)
 
 def split_into_portions(data, most):
     return [data[i:i+most] for i in range(0, len(data), most)]
