@@ -16,6 +16,7 @@ par.add_argument('--exe-7z', action='store', help='specify 7z executable to use'
 par.add_argument('--stdin-filelist', action='store_true', help='read lines from stdin as filenames')
 par.add_argument('--time', action='store_const', const=time(), help='print runtime in seconds to stderr at the end')
 par.add_argument('files', metavar='file', nargs='*', help='archive to scan')
+par.add_argument('--list-dir', action='append', default=[], dest='list_dirs', help='list dir for files')
 opts = par.parse_args()
 
 final_7z_exe = next(filter(None, [opts.exe_7z, os.getenv('ZIPSAVINGS_7ZEXE'), 'C:/mybin/7z.exe']))
@@ -24,11 +25,18 @@ files = list(opts.files)
 if opts.stdin_filelist:
     files.extend([l for l in sys.stdin.read().split('\n') if l])
 
+error_count = 0
+for d in opts.list_dirs:
+    if os.path.isdir(d):
+        files.extend(filter(os.path.isfile, [d + '/' + f for f in os.listdir(d)]))
+    else:
+        error_count += 1
+        print(f"ERROR: {d} : Tried to list a non-dir.", file=sys.stderr)
+
 def split_into_portions(data, most):
     return [data[i:i+most] for i in range(0, len(data), most)]
 
 archive_infos = []
-error_count = 0
 for file_group in split_into_portions(files, 8):
     jobs = [run7.make_job(f, exe7z=final_7z_exe) for f in file_group]
     for job in jobs:
