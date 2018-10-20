@@ -16,8 +16,8 @@ par.add_argument('--exe-7z', action='store', help='specify 7z executable to use'
 par.add_argument('--stdin-filelist', action='store_true', help='read lines from stdin as filenames')
 par.add_argument('--time', action='store_const', const=time(), help='print runtime in seconds to stderr at the end')
 par.add_argument('files', metavar='file', nargs='*', help='archive to scan')
-par.add_argument('--list-dir', action='append', default=[], dest='list_dirs', help='list dir for files')
-par.add_argument('--filelist', action='append', default=[], dest='filelists', help='files to read as lists of files to scan')
+par.add_argument('--list-dir', action='append', default=[], dest='list_dirs', metavar='dir', help='list dir for files')
+par.add_argument('--filelist', action='append', default=[], dest='filelists', metavar='filelist', help='file to read as lists of files to scan')
 opts = par.parse_args()
 
 final_7z_exe = next(filter(None, [opts.exe_7z, os.getenv('ZIPSAVINGS_7ZEXE'), 'C:/mybin/7z.exe']))
