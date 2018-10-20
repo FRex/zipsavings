@@ -68,7 +68,7 @@ if opts.total:
 
 infos = [model.pretty_print_info_fields(info) for info in archive_infos]
 headers = model.ArchiveInfo._fields
-print(table.pretty_print_table(infos, headers))
+print(table.pretty_print_table(infos, headers, opts.total))
 
 if opts.time is not None:
     start_time = opts.time
