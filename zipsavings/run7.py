@@ -77,4 +77,5 @@ class SevenJob:
 
 def make_job(fname, exe7z):
     if os.path.isdir(fname): return ErrorJob(f"ERROR: {fname} : A directory.")
+    if not os.path.isfile(fname): return ErrorJob(f"ERROR: {fname} : File doesn't exist.")
     return SevenJob([exe7z, 'l', '--', fname])
