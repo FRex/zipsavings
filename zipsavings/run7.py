@@ -19,8 +19,11 @@ def is_directory_output_lines(lines):
     i = lines.index('Scanning the drive for archives:')
     return ' folder,' in lines[i + 1] or ' folders,' in lines[i + 1]
 
+def good_output_line(line):
+    return line and not line.startswith('Warnings:') and not line.startswith('Errors:')
+
 def parse_7z_result(output, fname):
-    lines = [l for l in output.split('\n') if l and not l.startswith('Warnings:')]
+    lines = list(filter(good_output_line, output.split('\n')))
     archive_type = get_type_from_output_lines(lines)
     size = get_size_from_output_lines(lines)
     info_line = lines[-1]
