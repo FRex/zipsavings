@@ -20,10 +20,15 @@ def is_directory_output_lines(lines):
     return ' folder,' in lines[i + 1] or ' folders,' in lines[i + 1]
 
 def good_output_line(line):
-    return line and not line.startswith('Warnings:') and not line.startswith('Errors:')
+    return line and not line.startswith('Warnings:')
+
+def raise_on_trunc_archive(lines, fname):
+    if 'ERRORS:' in lines and 'Unexpected end of archive' in lines:
+        raise RuntimeError(f'ERROR: {fname} : Unexpected end of archive.')
 
 def parse_7z_result(output, fname):
     lines = list(filter(good_output_line, output.split('\n')))
+    raise_on_trunc_archive(lines, fname)
     archive_type = get_type_from_output_lines(lines)
     size = get_size_from_output_lines(lines)
     info_line = lines[-1]
