@@ -26,13 +26,34 @@ def raise_on_trunc_archive(lines, fname):
     if 'ERRORS:' in lines and 'Unexpected end of archive' in lines:
         raise RuntimeError(f'ERROR: {fname} : Unexpected end of archive.')
 
+def raise_on_headers_error(lines, fname):
+    if 'ERRORS:' in lines and 'Headers Error' in lines and 'Unconfirmed start of archive' in lines:
+        raise RuntimeError(f'ERROR: {fname} : Headers error, unconfirmed start of archive.')
+
+    if 'ERRORS:' in lines and 'Headers Error' in lines:
+        raise RuntimeError(f'ERROR: {fname} : Headers error.')
+
+def raise_on_generic_error(lines, fname):
+    if 'ERRORS:' in lines:
+        raise RuntimeError(f'ERROR: {fname} : Other unexpected error.')
+
+def find_last_dash_line_index(lines):
+    ret = None
+    for i, l in enumerate(lines):
+            if set(l) == set(' -'):
+                ret = i
+    return ret
+
 def parse_7z_result(output, fname):
     lines = list(filter(good_output_line, output.split('\n')))
     raise_on_trunc_archive(lines, fname)
+    raise_on_headers_error(lines, fname)
+    raise_on_generic_error(lines, fname)
     archive_type = get_type_from_output_lines(lines)
     size = get_size_from_output_lines(lines)
-    info_line = lines[-1]
-    dash_line = lines[-2]
+    dash_line_index = find_last_dash_line_index(lines)
+    dash_line = lines[dash_line_index]
+    info_line = lines[dash_line_index + 1]
     spaces = [i for i in range(len(dash_line)) if dash_line[i] == ' ']
     runs = zip([-1] + spaces, spaces + [len(dash_line)])
     parts = [info_line[1+run[0]:run[1]] for run in runs]

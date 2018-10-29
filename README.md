@@ -70,24 +70,29 @@ $ python -m zipsavings --list-dir test --total --sort file_count --reverse
 ERROR: test/a.bz2 : No size data in bzip2 format.
 ERROR: test/b.notarchive : Can not open the file as archive.
 ERROR: test/dracula.txt : Can not open the file as archive.
+ERROR: test/FreeDOS-FD12CD.7z.002 : Headers error, unconfirmed start of archive.
+ERROR: test/FreeDOS-FD12CD.7z.003 : Headers error, unconfirmed start of archive.
+ERROR: test/FreeDOS-FD12CD.7z.004 : Headers error, unconfirmed start of archive.
+ERROR: test/FreeDOS-FD12CD.7z.005 : Headers error, unconfirmed start of archive.
 ERROR: test/wat.txt.bz2 : No size data in bzip2 format.
-There were 4 errors.
+There were 8 errors.
 END OF ERRORS.
 
-archive                                |unpacked |packed   |saved     |saved_percent|file_count|type|size
----------------------------------------|---------|---------|----------|-------------|----------|----|---------
-test/FreeDOS-FD12CD.iso                |417.5 MiB|417.5 MiB|0 Bytes   |0.0%         |553       |Iso |418.5 MiB
-test/NorthBuryGrove.rar                |2.2 GiB  |966.2 MiB|1.2 GiB   |56.55%       |198       |Rar5|966.2 MiB
-test/Fedora-Xfce-Live-x86_64-28-1.1.iso|1.4 GiB  |1.4 GiB  |0 Bytes   |0.0%         |39        |Iso |1.3 GiB
-test/windirstat1_1_2_setup.exe         |2.2 MiB  |591.6 KiB|1.6 MiB   |73.24%       |23        |Nsis|630.6 KiB
-test/snek.7z                           |1.4 MiB  |484.4 KiB|947.2 KiB |66.16%       |6         |7z  |484.8 KiB
-test/x.tar                             |54 Bytes |1.0 KiB  |-970 Bytes|-1796.3%     |2         |tar |10.0 KiB
-test/d.gz                              |0 Bytes  |22 Bytes |-22 Bytes |0%           |1         |gzip|22 Bytes
-test/dracula.7z                        |846.9 KiB|268.2 KiB|578.6 KiB |68.32%       |1         |7z  |268.4 KiB
-test/dracula.zip                       |846.9 KiB|310.4 KiB|536.4 KiB |63.34%       |1         |zip |310.6 KiB
-test/wat.txt.gz                        |1.0 MiB  |1.0 MiB  |-186 Bytes|-0.02%       |1         |gzip|1.0 MiB
----------------------------------------|---------|---------|----------|-------------|----------|----|---------
-TOTAL                                  |4.0 GiB  |2.7 GiB  |1.2 GiB   |31.12%       |825       |SUM |2.6 GiB
+archive                                |unpacked |packed   |saved     |saved_percent|file_count|type |size
+---------------------------------------|---------|---------|----------|-------------|----------|-----|---------
+test/FreeDOS-FD12CD.iso                |417.5 MiB|417.5 MiB|0 Bytes   |0.0%         |553       |Iso  |418.5 MiB
+test/NorthBuryGrove.rar                |2.2 GiB  |966.2 MiB|1.2 GiB   |56.55%       |198       |Rar5 |966.2 MiB
+test/Fedora-Xfce-Live-x86_64-28-1.1.iso|1.4 GiB  |1.4 GiB  |0 Bytes   |0.0%         |39        |Iso  |1.3 GiB
+test/windirstat1_1_2_setup.exe         |2.2 MiB  |591.6 KiB|1.6 MiB   |73.24%       |23        |Nsis |630.6 KiB
+test/snek.7z                           |1.4 MiB  |484.4 KiB|947.2 KiB |66.16%       |6         |7z   |484.8 KiB
+test/x.tar                             |54 Bytes |1.0 KiB  |-970 Bytes|-1796.3%     |2         |tar  |10.0 KiB
+test/d.gz                              |0 Bytes  |22 Bytes |-22 Bytes |0%           |1         |gzip |22 Bytes
+test/dracula.7z                        |846.9 KiB|268.2 KiB|578.6 KiB |68.32%       |1         |7z   |268.4 KiB
+test/dracula.zip                       |846.9 KiB|310.4 KiB|536.4 KiB |63.34%       |1         |zip  |310.6 KiB
+test/FreeDOS-FD12CD.7z.001             |418.5 MiB|400.7 MiB|17.8 MiB  |4.25%        |1         |Split|100.0 MiB
+test/wat.txt.gz                        |1.0 MiB  |1.0 MiB  |-186 Bytes|-0.02%       |1         |gzip |1.0 MiB
+---------------------------------------|---------|---------|----------|-------------|----------|-----|---------
+TOTAL                                  |4.4 GiB  |3.1 GiB  |1.2 GiB   |28.61%       |826       |SUM  |2.7 GiB
 ```
 
 # Efficiency
