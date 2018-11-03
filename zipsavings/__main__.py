@@ -17,6 +17,7 @@ par.add_argument('--stdin-filelist', action='store_true', help='read lines from 
 par.add_argument('--time', action='store_const', const=time(), help='print runtime in seconds to stderr at the end')
 par.add_argument('files', metavar='file', nargs='*', help='archive to scan')
 par.add_argument('--list-dir', action='append', default=[], dest='list_dirs', metavar='dir', help='list dir for files')
+par.add_argument('--walk-dir', action='append', default=[], dest='walk_dirs', metavar='dir', help='walk dir tree for files')
 par.add_argument('--filelist', action='append', default=[], dest='filelists', metavar='filelist', help='file to read as lists of files to scan')
 opts = par.parse_args()
 
@@ -33,6 +34,11 @@ for d in opts.list_dirs:
     else:
         error_count += 1
         print(f"ERROR: {d} : Tried to list a non-dir.", file=sys.stderr)
+
+for d in opts.walk_dirs:
+    for path, dnames, fnames in os.walk(d):
+        addfiles = [(path + '/' + f).replace('\\', '/') for f in fnames]
+        files.extend(addfiles)
 
 for f in opts.filelists:
     try:
