@@ -82,14 +82,29 @@ class ErrorJob:
     def join(self):
         raise RuntimeError(self.message)
 
+
+PASSWORD_PROMPT_LIST = list('Enter password (will not be echoed):')
+def throw_on_password_prompt(job, fname):
+    ret = []
+    while True:
+        x = job.stdout.read(1)
+        if len(x) == 0: return ''.join(ret)
+        ret.append(x)
+        if ret[-len(PASSWORD_PROMPT_LIST):] == PASSWORD_PROMPT_LIST:
+            raise RuntimeError(f"ERROR: {fname} : Encrypted filenames.")
+    return ''.join(ret)
+
+
 class SevenJob:
     def __init__(self, args):
         self.args = args
-        self.job = Popen(args, errors='replace', stdout=PIPE, stderr=PIPE, universal_newlines=True)
+        self.job = Popen(args, errors='replace', stdin=PIPE, stdout=PIPE, stderr=PIPE, universal_newlines=True)
 
     def join(self):
-        stdout, stderr = self.job.communicate()
         fname = self.args[-1]
+        startout = throw_on_password_prompt(self.job, fname)
+        stdout, stderr = self.job.communicate()
+        stdout = startout + stdout
         #check dir first to prevent printing stderr about bad files found in a dir
         #despite check in start7z this is here just in case
         if is_directory_output_lines(stdout.split('\n')): raise RuntimeError(f"ERROR: {fname} : A directory.")
