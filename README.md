@@ -74,7 +74,7 @@ with `Can not open the file as archive.` or (sometimes) `Headers error, unconfir
 # Example usage
 
 ```
-$ python -m zipsavings --list-dir test --total --sort file_count --reverse
+$ python -m zipsavings --list-dir test --total --sort file_count --reverse --time
 ERROR: test/a.bz2 : No size data in bzip2 format.
 ERROR: test/b.notarchive : Can not open the file as archive.
 ERROR: test/dracula-encrypted.7z : Encrypted filenames.
@@ -99,6 +99,7 @@ END OF ERRORS.
 
 archive                                |unpacked |packed   |saved     |saved_percent|file_count|type |size
 ---------------------------------------|---------|---------|----------|-------------|----------|-----|---------
+test/million-files.7z                  |5.7 MiB  |155.5 KiB|5.6 MiB   |97.35%       |1000000   |7z   |6.4 MiB
 test/FreeDOS-FD12CD.iso                |417.5 MiB|417.5 MiB|0 Bytes   |0.0%         |553       |Iso  |418.5 MiB
 test/NorthBuryGrove.rar                |2.2 GiB  |966.2 MiB|1.2 GiB   |56.55%       |198       |Rar5 |966.2 MiB
 test/Fedora-Xfce-Live-x86_64-28-1.1.iso|1.4 GiB  |1.4 GiB  |0 Bytes   |0.0%         |39        |Iso  |1.3 GiB
@@ -116,7 +117,8 @@ test/random10megs.7z.001               |10.0 MiB |10.0 MiB |-559 Bytes|-0.01%   
 test/random10megs.zip.001              |10.0 MiB |10.0 MiB |0 Bytes   |0.0%         |1         |Split|4.0 MiB
 test/wat.txt.gz                        |1.0 MiB  |1.0 MiB  |-186 Bytes|-0.02%       |1         |gzip |1.0 MiB
 ---------------------------------------|---------|---------|----------|-------------|----------|-----|---------
-TOTAL                                  |4.8 GiB  |3.5 GiB  |1.3 GiB   |26.15%       |831       |SUM  |2.9 GiB
+TOTAL                                  |4.8 GiB  |3.5 GiB  |1.3 GiB   |26.23%       |1000831   |SUM  |2.9 GiB
+Processed 17 files out of 36 given in 2.52689266204834 seconds.
 ```
 
 # Efficiency

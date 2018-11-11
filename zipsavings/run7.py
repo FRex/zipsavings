@@ -37,12 +37,11 @@ def raise_on_generic_error(lines, fname):
     if 'ERRORS:' in lines:
         raise RuntimeError(f'ERROR: {fname} : Other unexpected error.')
 
+BIG_DASH_LINE = '------------------- ----- ------------ ------------  ------------------------'
 def find_last_dash_line_index(lines):
-    ret = None
-    for i, l in enumerate(lines):
-            if set(l) == set(' -'):
-                ret = i
-    return ret
+    for i in range(len(lines) - 1, -1, -1):
+        if lines[i] == BIG_DASH_LINE:
+            return i
 
 def parse_7z_result(output, fname):
     lines = list(filter(good_output_line, output.split('\n')))
@@ -86,12 +85,13 @@ class ErrorJob:
 PASSWORD_PROMPT_LIST = list('Enter password (will not be echoed):')
 def throw_on_password_prompt(job, fname):
     ret = []
+    dashes = list('\n--\n')
     while True:
         x = job.stdout.read(1)
-        if len(x) == 0: return ''.join(ret)
+        if len(x) == 0: break
         ret.append(x)
-        if ret[-len(PASSWORD_PROMPT_LIST):] == PASSWORD_PROMPT_LIST:
-            raise RuntimeError(f"ERROR: {fname} : Encrypted filenames.")
+        if ret[-len(PASSWORD_PROMPT_LIST):] == PASSWORD_PROMPT_LIST: raise RuntimeError(f"ERROR: {fname} : Encrypted filenames.")
+        if ret[-len(dashes):] == dashes: break
     return ''.join(ret)
 
 
