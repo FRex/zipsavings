@@ -73,7 +73,7 @@ if opts.total_only:
     headers = model.ArchiveInfo._fields
     print(table.pretty_print_table([total], headers, False))
 else:
-    if opts.sort: archive_infos.sort(lambda x: getattr(x, opts.sort), opts.reverse)
+    if opts.sort: archive_infos.sort(key=lambda x: getattr(x, opts.sort), reverse=opts.reverse)
     if opts.total: archive_infos.append(model.sum_archive_infos(archive_infos))
     infos = [model.pretty_print_info_fields(info) for info in archive_infos]
     headers = model.ArchiveInfo._fields
