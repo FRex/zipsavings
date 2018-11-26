@@ -2,7 +2,7 @@
 `zipsavings` is a simple Python script/module that uses `subprocess.Popen`
 to invoke `7z l` on each given archive and print stats about it.
 
-Made on `Python 3.6.5 (v3.6.5:f59c0932b4, Mar 28 2018, 17:00:18) [MSC v.1900 64 bit (AMD64)] on win32`,
+Made on `Python 3.7.1 (v3.7.1:260ec2c36a, Oct 20 2018, 14:57:15) [MSC v.1915 64 bit (AMD64)] on win32`,
 might work on older versions too. If you need it for older version of Python 3 feel free to open an issue for it.
 
 I wrote it for personal use which shows (no documentation, ad-hoc code, etc.) but
@@ -121,7 +121,7 @@ test/random10megs.zip.001              |10.0 MiB |10.0 MiB |0 Bytes   |0.0%     
 test/wat.txt.gz                        |1.0 MiB  |1.0 MiB  |-186 Bytes|-0.02%       |1         |gzip |1.0 MiB
 ---------------------------------------|---------|---------|----------|-------------|----------|-----|---------
 TOTAL                                  |4.8 GiB  |3.6 GiB  |1.3 GiB   |26.17%       |1003462   |SUM  |2.9 GiB
-Processed 20 files out of 39 given in 2.6636645793914795 seconds.
+Processed 20 files out of 39 given in 2.7528934478759766 seconds.
 ```
 
 # Efficiency
