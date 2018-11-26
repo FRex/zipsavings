@@ -20,6 +20,7 @@ par.add_argument('--list-dir', action='append', default=[], dest='list_dirs', me
 par.add_argument('--walk-dir', action='append', default=[], dest='walk_dirs', metavar='dir', help='walk dir tree for files')
 par.add_argument('--filelist', action='append', default=[], dest='filelists', metavar='filelist', help='file to read as lists of files to scan')
 par.add_argument('--total-only', action='store_true', help='sum the files and print only that')
+par.add_argument('--silent', action='store_true', help='print nothing to stdout')
 opts = par.parse_args()
 
 final_7z_exe = next(filter(None, [opts.exe_7z, os.getenv('ZIPSAVINGS_7ZEXE'), 'C:/mybin/7z.exe']))
@@ -71,13 +72,15 @@ if opts.total_only:
     total = model.sum_archive_infos(archive_infos)
     total = model.pretty_print_info_fields(total)
     headers = model.ArchiveInfo._fields
-    print(table.pretty_print_table([total], headers, False))
+    pretty = table.pretty_print_table([total], headers, False)
+    if not opts.silent: print(pretty)
 else:
     if opts.sort: archive_infos.sort(key=lambda x: getattr(x, opts.sort), reverse=opts.reverse)
     if opts.total: archive_infos.append(model.sum_archive_infos(archive_infos))
     infos = [model.pretty_print_info_fields(info) for info in archive_infos]
     headers = model.ArchiveInfo._fields
-    print(table.pretty_print_table(infos, headers, opts.total))
+    pretty = table.pretty_print_table(infos, headers, opts.total)
+    if not opts.silent: print(pretty)
 
 if opts.time is not None:
     start_time = opts.time
