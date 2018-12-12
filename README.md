@@ -61,6 +61,15 @@ but simple compression layers around single file, just usually used with `tar`) 
 In case of `bzip2` (another compression often used with `tar`) an error will be
 printed as `compressed` column in `7z l` output is empty.
 
+Some files give **very** unusual results if they confuse `7z` itself.
+For example, running `zipsavings` on an entire tree of files using `--walk-dir` I
+ran across a `.o` file made by `GHC` (Glasgow Haskell Compiler) on `Windows 10`
+that `7z l` reports as being a bit over `50 TiB` (`54975648497664` bytes,
+exactly `50 TiB` and `64 MiB`) unpacked. It even broke a certain fragile part
+of `7z l` output parsing code due to how wide that number is in the output (and
+I never ran across an archive that had such crazy sizes in them and thus don't
+have such an archive in files I test zipsavings on each commit with).
+
 It doesn't unpack the archive nor looks at filenames to warn about possible
 archive-in-archive scenarios that will make savings look really small (because
 the real savings are in inner archives, not the outer one that this tool analyzes).
@@ -121,7 +130,7 @@ test/random10megs.zip.001              |10.0 MiB |10.0 MiB |0 Bytes   |0.0%     
 test/wat.txt.gz                        |1.0 MiB  |1.0 MiB  |-186 Bytes|-0.02%       |1         |gzip |1.0 MiB
 ---------------------------------------|---------|---------|----------|-------------|----------|-----|---------
 TOTAL                                  |4.8 GiB  |3.6 GiB  |1.3 GiB   |26.17%       |1003462   |SUM  |2.9 GiB
-Processed 20 files out of 39 given in 2.7528934478759766 seconds.
+Processed 20 files out of 39 given in 2.973677396774292 seconds.
 ```
 
 # Efficiency

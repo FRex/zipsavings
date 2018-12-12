@@ -43,6 +43,13 @@ def find_last_dash_line_index(lines):
         if lines[i] == BIG_DASH_LINE:
             return i
 
+def get_ints_from_line(line):
+    ret = []
+    for x in line.split():
+        try: ret.append(int(x))
+        except ValueError: pass
+    return ret
+
 def parse_7z_result(output, fname):
     lines = list(filter(good_output_line, output.split('\n')))
     raise_on_trunc_archive(lines, fname)
@@ -51,17 +58,14 @@ def parse_7z_result(output, fname):
     archive_type = get_type_from_output_lines(lines)
     size = get_size_from_output_lines(lines)
     dash_line_index = find_last_dash_line_index(lines)
-    dash_line = lines[dash_line_index]
     info_line = lines[dash_line_index + 1]
-    spaces = [i for i in range(len(dash_line)) if dash_line[i] == ' ']
-    runs = zip([-1] + spaces, spaces + [len(dash_line)])
-    parts = [info_line[1+run[0]:run[1]] for run in runs]
-    parts = filter(None, parts)
-    parts = list(map(str.strip, parts))
-    if parts[2] == '': raise RuntimeError(f"ERROR: {fname} : No size data in {archive_type} format.")
-    unpacked = int(parts[2])
-    packed = int(parts[3])
-    file_count = int(parts[4].split(' ')[0])
+    info_line = info_line.replace(' folders', '@@@') #just to be safe in case we run on 'x files, y folders' line
+    parts = get_ints_from_line(info_line)
+    if len(parts) < 3: raise RuntimeError(f"ERROR: {fname} : No size data in {archive_type} format.")
+    if len(parts) > 3: raise RuntimeError(f"ERROR: {fname} : Too many ints parsed in line: {info_line}")
+    unpacked = parts[0]
+    packed = parts[1]
+    file_count = parts[2]
     saved = unpacked - packed
     saved_percent = model.percent(unpacked, packed)
     return model.ArchiveInfo(fname, unpacked, packed, saved, saved_percent, file_count, archive_type, size)
