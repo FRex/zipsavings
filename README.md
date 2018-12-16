@@ -128,9 +128,10 @@ test/FreeDOS-FD12CD.zip.001            |418.5 MiB|411.9 MiB|6.5 MiB   |1.55%    
 test/random10megs.7z.001               |10.0 MiB |10.0 MiB |-559 Bytes|-0.01%       |1         |Split|4.0 MiB
 test/random10megs.zip.001              |10.0 MiB |10.0 MiB |0 Bytes   |0.0%         |1         |Split|4.0 MiB
 test/wat.txt.gz                        |1.0 MiB  |1.0 MiB  |-186 Bytes|-0.02%       |1         |gzip |1.0 MiB
+test/xz.xz                             |4.8 MiB  |492.9 KiB|4.3 MiB   |89.96%       |1         |xz   |492.9 KiB
 ---------------------------------------|---------|---------|----------|-------------|----------|-----|---------
-TOTAL                                  |4.8 GiB  |3.6 GiB  |1.3 GiB   |26.17%       |1003462   |SUM  |2.9 GiB
-Processed 20 files out of 39 given in 2.973677396774292 seconds.
+TOTAL                                  |4.8 GiB  |3.6 GiB  |1.3 GiB   |26.24%       |1003463   |SUM  |2.9 GiB
+Processed 21 files out of 40 given in 2.8770182132720947 seconds.
 ```
 
 # Efficiency
