@@ -83,6 +83,13 @@ with `Can not open the file as archive.` or (sometimes) `Headers error, unconfir
 # Example usage
 
 ```
+$ python -m zipsavings ./test/snek.7z
+archive       |unpacked|packed   |saved    |saved_percent|file_count|type|size
+--------------|--------|---------|---------|-------------|----------|----|---------
+./test/snek.7z|1.4 MiB |484.4 KiB|947.2 KiB|66.16%       |6         |7z  |484.8 KiB
+```
+
+```
 $ python -m zipsavings --list-dir test --total --sort file_count --reverse --time
 ERROR: test/a.bz2 : No size data in bzip2 format.
 ERROR: test/b.notarchive : Can not open the file as archive.
