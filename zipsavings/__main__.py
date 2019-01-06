@@ -21,6 +21,7 @@ par.add_argument('--walk-dir', action='append', default=[], dest='walk_dirs', me
 par.add_argument('--filelist', action='append', default=[], dest='filelists', metavar='filelist', help='file to read as lists of files to scan')
 par.add_argument('--total-only', action='store_true', help='sum the files and print only that')
 par.add_argument('--silent', action='store_true', help='print nothing to stdout')
+par.add_argument('--raw', action='store_true', help='print raw numbers with no pretty printing')
 opts = par.parse_args()
 
 final_7z_exe = next(filter(None, [opts.exe_7z, os.getenv('ZIPSAVINGS_7ZEXE'), 'C:/mybin/7z.exe']))
@@ -68,16 +69,17 @@ if error_count > 0:
     print(f'There were {error_count} errors.', file=sys.stderr)
     print('END OF ERRORS.\n', file=sys.stderr)
 
+pprinter = lambda x: x if opts.raw else model.pretty_print_info_fields
 if opts.total_only:
     total = model.sum_archive_infos(archive_infos)
-    total = model.pretty_print_info_fields(total)
+    total = pprinter(total)
     headers = model.ArchiveInfo._fields
     pretty = table.pretty_print_table([total], headers, False)
     if not opts.silent: print(pretty)
 else:
     if opts.sort: archive_infos.sort(key=lambda x: getattr(x, opts.sort), reverse=opts.reverse)
     if opts.total: archive_infos.append(model.sum_archive_infos(archive_infos))
-    infos = [model.pretty_print_info_fields(info) for info in archive_infos]
+    infos = [pprinter(info) for info in archive_infos]
     headers = model.ArchiveInfo._fields
     pretty = table.pretty_print_table(infos, headers, opts.total)
     if not opts.silent: print(pretty)
