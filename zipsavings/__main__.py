@@ -69,7 +69,7 @@ if error_count > 0:
     print(f'There were {error_count} errors.', file=sys.stderr)
     print('END OF ERRORS.\n', file=sys.stderr)
 
-pprinter = lambda x: x if opts.raw else model.pretty_print_info_fields
+pprinter = (lambda x: x) if opts.raw else model.pretty_print_info_fields
 if opts.total_only:
     total = model.sum_archive_infos(archive_infos)
     total = pprinter(total)
