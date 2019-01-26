@@ -29,8 +29,10 @@ in `File formats` section for an example of where I found such a file).
 Note: 'unpacked' and 'packed' fields show sizes of data files themselves
 before and after packing, they don't take 'size on disk' into account
 for 'unpacked' nor headers/archive format overhead for 'packed'. The 'size'
-column shows the size of the archive itself
-in bytes ('Physical Size' in `7z l` output).
+column shows the size of the archive itself in bytes (the size listed in
+'Scanning the drive for archives:' part of `7z l` output, as far as I know
+it's the same as the 'Physical Size' line but that line isn't present in
+outputs for some formats like `gz`).
 
 Best way to run it is to zip up the `zipsavings` directory contents
 and run it directly with python or (to keep tinkering with it) via a help
