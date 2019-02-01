@@ -39,9 +39,13 @@ for d in opts.list_dirs:
         print(f"ERROR: {d} : Tried to list a non-dir.", file=sys.stderr)
 
 for d in opts.walk_dirs:
-    for path, dnames, fnames in os.walk(d):
-        addfiles = [(path + '/' + f).replace('\\', '/') for f in fnames]
-        files.extend(addfiles)
+    if os.path.isdir(d):
+        for path, dnames, fnames in os.walk(d):
+            addfiles = [(path + '/' + f).replace('\\', '/') for f in fnames]
+            files.extend(addfiles)
+    else:
+        error_count += 1
+        print(f"ERROR: {d} : Tried to walk a non-dir.", file=sys.stderr)
 
 for f in opts.filelists:
     try:
