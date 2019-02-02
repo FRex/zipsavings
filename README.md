@@ -73,13 +73,15 @@ It works fully (both compression stats and file
 count) for `rar`, `7z`, `zip`, some `exe` (NSIS installers), etc.
 
 In case of `iso` and `tar` (without additional compression around it) the file
-count is accurate but compression will be 0 or slightly negative.
+count is accurate but compression will be slightly negative (see 'Note' about
+output field meanings above).
 
 In case of `xz` and `gzip` the file count will be 1 (since these aren't archives
-but simple compression layers around single file, just usually used with `tar`) but compression will be accurate.
+but simple compression layers around single file, just usually used with `tar`)
+but compression will be accurate.
 
 In case of `bzip2` (another compression often used with `tar`) an error will be
-printed as `compressed` column in `7z l` output is empty (`bz2` file format
+printed as `Size` column in `7z l` output is empty (`bz2` file format
 has no header field saying how big the original uncompressed file was).
 
 Some files give **very** unusual results if they confuse `7z` itself.
