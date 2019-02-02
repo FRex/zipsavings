@@ -34,7 +34,10 @@ larger than (due to format headers, padding, filenames and so on) the
 sum of 'Compressed' column in `7z l` output. Field 'unpacked' means the sum
 of 'Size' column in `7z l` output and is sum of byte sizes of all files
 in the archive (loose files on disk might take up more or less space due to
-how filesystem allocates disk space exactly).
+how filesystem allocates disk space exactly). Due to this uncompressed formats
+(`iso`, `tar`, etc.) and small archives or archives with incompressible data
+where padding, headers and filenames add more bytes than compression saves
+will show small negative savings.
 
 Best way to run it is to zip up the `zipsavings` directory contents
 and run it directly with python or (to keep tinkering with it) via a help
