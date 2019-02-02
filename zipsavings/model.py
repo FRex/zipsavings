@@ -1,7 +1,7 @@
 from collections import namedtuple
 
 
-ArchiveInfo = namedtuple('ArchiveInfo', 'archive, unpacked, packed, saved, saved_percent, file_count, type, size')
+ArchiveInfo = namedtuple('ArchiveInfo', 'archive, size, unpacked, saved, saved_percent, file_count, type')
 
 def percent(real, packed):
     if real == 0: return 0
@@ -10,19 +10,17 @@ def percent(real, packed):
 
 def sum_archive_infos(archive_infos):
     total_unpacked = 0
-    total_packed = 0
     total_saved = 0
     total_file_count = 0
     total_size = 0
     for info in archive_infos:
         total_unpacked += info.unpacked
-        total_packed += info.packed
         total_saved += info.saved
         total_file_count += info.file_count
         total_size += info.size
 
-    total_saved_percent = percent(total_unpacked, total_packed)
-    return ArchiveInfo('TOTAL', total_unpacked, total_packed, total_saved, total_saved_percent, total_file_count, 'SUM', total_size)
+    total_saved_percent = percent(total_unpacked, total_size)
+    return ArchiveInfo('TOTAL', total_size, total_unpacked, total_saved, total_saved_percent, total_file_count, 'SUM')
 
 def binary_size(x):
     if x == 1: return "1 Byte"
@@ -42,10 +40,9 @@ def binary_size(x):
 def pretty_print_info_fields(info):
     archive = info.archive
     unpacked = binary_size(info.unpacked)
-    packed = binary_size(info.packed)
     saved = binary_size(info.saved)
     saved_percent = str(round(info.saved_percent, 2)) + '%'
     file_count = info.file_count
     atype = info.type
     size = binary_size(info.size)
-    return ArchiveInfo(archive, unpacked, packed, saved, saved_percent, file_count, atype, size)
+    return ArchiveInfo(archive, size, unpacked, saved, saved_percent, file_count, atype)

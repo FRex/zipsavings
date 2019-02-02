@@ -64,11 +64,10 @@ def parse_7z_result(output, fname):
     if len(parts) < 3: raise RuntimeError(f"ERROR: {fname} : No size data in {archive_type} format.")
     if len(parts) > 3: raise RuntimeError(f"ERROR: {fname} : Too many ints parsed in line: {info_line}")
     unpacked = parts[0]
-    packed = parts[1]
     file_count = parts[2]
-    saved = unpacked - packed
-    saved_percent = model.percent(unpacked, packed)
-    return model.ArchiveInfo(fname, unpacked, packed, saved, saved_percent, file_count, archive_type, size)
+    saved = unpacked - size
+    saved_percent = model.percent(unpacked, size)
+    return model.ArchiveInfo(fname, size, unpacked, saved, saved_percent, file_count, archive_type)
 
 def adjust_error_string(stderr):
     lines = list(filter(None, stderr.split('\n')))
