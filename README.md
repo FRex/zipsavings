@@ -78,7 +78,10 @@ output field meanings above).
 
 In case of `xz` and `gzip` the file count will be 1 (since these aren't archives
 but simple compression layers around single file, just usually used with `tar`)
-but compression will be accurate.
+but compression will be accurate (except for `gzip` where the original size
+is reported modulo 2^32 due to format limitation so for files that were bigger
+than 4 GiB before compression it'll be inaccurate and report high negative
+savings due to 'unpacked' field being too small).
 
 In case of `bzip2` (another compression often used with `tar`) an error will be
 printed as `Size` column in `7z l` output is empty (`bz2` file format
