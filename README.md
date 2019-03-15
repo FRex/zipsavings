@@ -4,10 +4,10 @@ to invoke `7z l` on each given archive and print stats about it.
 
 ```
 $ zipsavings ./test/dracula.7z ./test/dracula.zip
-archive           |size     |unpacked |saved    |saved_percent|file_count|type
-------------------|---------|---------|---------|-------------|----------|----
-./test/dracula.7z |268.4 KiB|846.9 KiB|578.5 KiB|68.31%       |1         |7z
-./test/dracula.zip|310.6 KiB|846.9 KiB|536.3 KiB|63.32%       |1         |zip
+archive           |size      |unpacked  |saved     |saved_percent|file_count|type
+------------------|----------|----------|----------|-------------|----------|----
+./test/dracula.7z |268.38 KiB|846.86 KiB|578.48 KiB|68.31%       |1         |7z
+./test/dracula.zip|310.59 KiB|846.86 KiB|536.27 KiB|63.32%       |1         |zip
 ```
 
 See below for a more complex example of invoking and output.
@@ -119,9 +119,9 @@ with `Can not open the file as archive.` or (sometimes) `Headers error, unconfir
 
 ```
 $ python -m zipsavings ./test/snek.7z
-archive       |size     |unpacked|saved    |saved_percent|file_count|type
---------------|---------|--------|---------|-------------|----------|----
-./test/snek.7z|484.8 KiB|1.4 MiB |946.9 KiB|66.14%       |6         |7z
+archive       |size      |unpacked|saved     |saved_percent|file_count|type
+--------------|----------|--------|----------|-------------|----------|----
+./test/snek.7z|484.75 KiB|1.4 MiB |946.87 KiB|66.14%       |6         |7z
 ```
 
 ```
@@ -148,32 +148,32 @@ ERROR: test/wat.txt.bz2 : No size data in bzip2 format.
 There were 19 errors.
 END OF ERRORS.
 
-archive                                |size     |unpacked |saved     |saved_percent|file_count|type
----------------------------------------|---------|---------|----------|-------------|----------|-----
-test/million-files.7z                  |6.4 MiB  |5.7 MiB  |-699.1 KiB|-11.93%      |1000000   |7z
-test/d8krhj4kasdu3~.swf                |11.4 MiB |11.4 MiB |-15.4 KiB |-0.13%       |2628      |SWF
-test/FreeDOS-FD12CD.iso                |418.5 MiB|417.5 MiB|-972.0 KiB|-0.23%       |553       |Iso
-test/NorthBuryGrove.rar                |966.2 MiB|2.2 GiB  |1.2 GiB   |56.55%       |198       |Rar5
-test/Fedora-Xfce-Live-x86_64-28-1.1.iso|1.3 GiB  |1.4 GiB  |84.3 MiB  |6.0%         |39        |Iso
-test/windirstat1_1_2_setup.exe         |630.6 KiB|2.2 MiB  |1.5 MiB   |71.47%       |23        |Nsis
-test/snek.7z                           |484.8 KiB|1.4 MiB  |946.9 KiB |66.14%       |6         |7z
-test/showframe.cab                     |1.3 KiB  |2.3 KiB  |990 Bytes |42.15%       |2         |Cab
-test/x.tar                             |10.0 KiB |54 Bytes |-9.9 KiB  |-18862.96%   |2         |tar
-test/d.gz                              |22 Bytes |0 Bytes  |-22 Bytes |0%           |1         |gzip
-test/d8krhj4kasdu3.swf                 |9.9 MiB  |11.4 MiB |1.5 MiB   |13.29%       |1         |SWFc
-test/dracula.7z                        |268.4 KiB|846.9 KiB|578.5 KiB |68.31%       |1         |7z
-test/dracula.zip                       |310.6 KiB|846.9 KiB|536.3 KiB |63.32%       |1         |zip
-test/dracula.zip.7z                    |310.7 KiB|310.6 KiB|-149 Bytes|-0.05%       |1         |7z
-test/fixpdfmag.tar.lzma                |1.3 KiB  |10.0 KiB |8.7 KiB   |87.14%       |1         |lzma
-test/FreeDOS-FD12CD.7z.001             |100.0 MiB|418.5 MiB|318.5 MiB |76.1%        |1         |Split
-test/FreeDOS-FD12CD.zip.001            |100.0 MiB|418.5 MiB|318.5 MiB |76.1%        |1         |Split
-test/random10megs.7z.001               |4.0 MiB  |10.0 MiB |6.0 MiB   |60.0%        |1         |Split
-test/random10megs.zip.001              |4.0 MiB  |10.0 MiB |6.0 MiB   |60.0%        |1         |Split
-test/wat.txt.gz                        |1.0 MiB  |1.0 MiB  |-186 Bytes|-0.02%       |1         |gzip
-test/xz.xz                             |492.9 KiB|4.8 MiB  |4.3 MiB   |89.96%       |1         |xz
----------------------------------------|---------|---------|----------|-------------|----------|-----
-TOTAL                                  |2.9 GiB  |4.8 GiB  |2.0 GiB   |40.43%       |1003463   |SUM
-Processed 21 files out of 40 given in 2.7850258350372314 seconds.
+archive                                |size      |unpacked  |saved      |saved_percent|file_count|type
+---------------------------------------|----------|----------|-----------|-------------|----------|-----
+test/million-files.7z                  |6.4 MiB   |5.72 MiB  |-699.06 KiB|-11.93%      |1000000   |7z
+test/d8krhj4kasdu3~.swf                |11.38 MiB |11.36 MiB |-15.36 KiB |-0.13%       |2628      |SWF
+test/FreeDOS-FD12CD.iso                |418.45 MiB|417.5 MiB |-971.99 KiB|-0.23%       |553       |Iso
+test/NorthBuryGrove.rar                |966.21 MiB|2.17 GiB  |1.23 GiB   |56.55%       |198       |Rar5
+test/Fedora-Xfce-Live-x86_64-28-1.1.iso|1.29 GiB  |1.37 GiB  |84.26 MiB  |6.0%         |39        |Iso
+test/windirstat1_1_2_setup.exe         |630.59 KiB|2.16 MiB  |1.54 MiB   |71.47%       |23        |Nsis
+test/snek.7z                           |484.75 KiB|1.4 MiB   |946.87 KiB |66.14%       |6         |7z
+test/showframe.cab                     |1.33 KiB  |2.29 KiB  |990 Bytes  |42.15%       |2         |Cab
+test/x.tar                             |10.0 KiB  |54 Bytes  |-9.95 KiB  |-18862.96%   |2         |tar
+test/d.gz                              |22 Bytes  |0 Bytes   |-22 Bytes  |0%           |1         |gzip
+test/d8krhj4kasdu3.swf                 |9.87 MiB  |11.38 MiB |1.51 MiB   |13.29%       |1         |SWFc
+test/dracula.7z                        |268.38 KiB|846.86 KiB|578.48 KiB |68.31%       |1         |7z
+test/dracula.zip                       |310.59 KiB|846.86 KiB|536.27 KiB |63.32%       |1         |zip
+test/dracula.zip.7z                    |310.74 KiB|310.59 KiB|-149 Bytes |-0.05%       |1         |7z
+test/fixpdfmag.tar.lzma                |1.29 KiB  |10.0 KiB  |8.71 KiB   |87.14%       |1         |lzma
+test/FreeDOS-FD12CD.7z.001             |100.0 MiB |418.45 MiB|318.45 MiB |76.1%        |1         |Split
+test/FreeDOS-FD12CD.zip.001            |100.0 MiB |418.45 MiB|318.45 MiB |76.1%        |1         |Split
+test/random10megs.7z.001               |4.0 MiB   |10.0 MiB  |6.0 MiB    |60.0%        |1         |Split
+test/random10megs.zip.001              |4.0 MiB   |10.0 MiB  |6.0 MiB    |60.0%        |1         |Split
+test/wat.txt.gz                        |1.0 MiB   |1.0 MiB   |-186 Bytes |-0.02%       |1         |gzip
+test/xz.xz                             |492.93 KiB|4.79 MiB  |4.31 MiB   |89.96%       |1         |xz
+---------------------------------------|----------|----------|-----------|-------------|----------|-----
+TOTAL                                  |2.88 GiB  |4.83 GiB  |1.95 GiB   |40.43%       |1003463   |SUM
+Processed 21 files out of 40 given in 7.358737468719482 seconds.
 ```
 
 # Efficiency
