@@ -35,7 +35,7 @@ def binary_size(x):
     sign = '-' if x < 0 else ''
     divisor = 1024 ** i
     rest = abs(x) - n * divisor
-    return f"{sign}{round(n + rest / divisor, 1)} {UNIT[i]}"
+    return f"{sign}{round(n + rest / divisor, 2)} {UNIT[i]}"
 
 def pretty_print_info_fields(info):
     archive = info.archive
