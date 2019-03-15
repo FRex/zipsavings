@@ -1,7 +1,16 @@
 # zipsavings
 `zipsavings` is a simple Python script/module that uses `subprocess.Popen`
-to invoke `7z l` on each given archive and print stats about it. See below for
-an example of invoking and output.
+to invoke `7z l` on each given archive and print stats about it.
+
+```
+$ zipsavings ./test/dracula.7z ./test/dracula.zip
+archive           |size     |unpacked |saved    |saved_percent|file_count|type
+------------------|---------|---------|---------|-------------|----------|----
+./test/dracula.7z |268.4 KiB|846.9 KiB|578.5 KiB|68.31%       |1         |7z
+./test/dracula.zip|310.6 KiB|846.9 KiB|536.3 KiB|63.32%       |1         |zip
+```
+
+See below for a more complex example of invoking and output.
 
 Made on `Python 3.7.1 (v3.7.1:260ec2c36a, Oct 20 2018, 14:57:15) [MSC v.1915 64 bit (AMD64)] on win32`,
 might work on older versions too. If you need it for older version of Python 3 feel free to open an issue for it.
