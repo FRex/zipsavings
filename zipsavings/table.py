@@ -5,11 +5,8 @@ def calculate_fields_widths(infos, headers):
             ret[i] = max(ret[i], len(str(field)))
     return ret
 
-def pad(s, w):
-    return s + ' ' * (w - len(s))
-
 def make_row(row_data, field_widths):
-    return '|'.join(pad(str(r), w) for r, w in zip(row_data, field_widths))
+    return '|'.join(str(r).ljust(w) for r, w in zip(row_data, field_widths))
 
 def make_separator(field_widths):
     return '|'.join('-' * w for w in field_widths)
