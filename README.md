@@ -2,11 +2,13 @@
 `zipsavings` is a simple Python script/module that uses `subprocess.Popen`
 to invoke `7z l` on each given archive and print stats about it.
 
-It can also invoke (for files with extensions `.cso` and `.zso`) `csoinfo`, which is
-another small tool I made, to print information about `cso` and `zso` files too.
-You can get it from releases here: [FRex/csoinfo](https://github.com/FRex/csoinfo).
-If it's missing you'll get errors for those files but they were also errors before,
-just different ones, since `7z` can't recognize `cso`/`zso`.
+It will also invoke (for files with extensions `.cso` and `.zso`) `csoinfo`, which
+is another small tool I made, to print information about `cso` and `zso` files.
+
+You can get `csoinfo` from releases here: [FRex/csoinfo](https://github.com/FRex/csoinfo).
+
+If it's missing you'll get errors but before `csoinfo` was made and added to
+`zipsavings` they were also errors since `7z` can't parse `cso`/`zso`/ files.
 
 ```
 $ zipsavings ./test/dracula.7z ./test/dracula.zip
@@ -68,6 +70,7 @@ python -B -m zipsavings "$@"
 
 Use `--exe-7z=path` or set env var `ZIPSAVINGS_7ZEXE` to specify the `7z` exe.
 If both are missing the fallback is `C:/mybin/7z.exe` since that's where I happen keep mine.
+
 Use `--exe-csoinfo=path` or set env var `ZIPSAVINGS_CSOINFOEXE` to specify the `csoinfo` exe.
 If both are missing the fallback is again `C:/mybin/csoinfo.exe`.
 
