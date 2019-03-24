@@ -13,6 +13,7 @@ par.add_argument('-t', '--total', action='store_true', help='sum the files')
 par.add_argument('-s', '--sort', action='store', help='sort by given field', choices=model.ArchiveInfo._fields)
 par.add_argument('-r', '--reverse', action='store_true', help='reverse the sort')
 par.add_argument('--exe-7z', action='store', help='specify 7z executable to use')
+par.add_argument('--exe-csoinfo', action='store', help='specify csoinfo executable to use')
 par.add_argument('--stdin-filelist', action='store_true', help='read lines from stdin as filenames')
 par.add_argument('--time', action='store_const', const=time(), help='print runtime in seconds to stderr at the end')
 par.add_argument('files', metavar='file', nargs='*', help='archive to scan')
@@ -25,6 +26,7 @@ par.add_argument('--raw', action='store_true', help='print raw numbers with no p
 opts = par.parse_args()
 
 final_7z_exe = next(filter(None, [opts.exe_7z, os.getenv('ZIPSAVINGS_7ZEXE'), 'C:/mybin/7z.exe']))
+final_csoinfo_exe = next(filter(None, [opts.exe_csoinfo, os.getenv('ZIPSAVINGS_CSOINFOEXE'), 'C:/mybin/csoinfo.exe']))
 files = list(opts.files)
 
 if opts.stdin_filelist:
@@ -60,7 +62,7 @@ def split_into_portions(data, most):
 
 archive_infos = []
 for file_group in split_into_portions(files, 8):
-    jobs = [run7.make_job(f, exe7z=final_7z_exe) for f in file_group]
+    jobs = [run7.make_job(f, exe7z=final_7z_exe, execsoinfo=final_csoinfo_exe) for f in file_group]
     for job in jobs:
         try:
             archive_infos.append(job.join())

@@ -114,7 +114,33 @@ class SevenJob:
         if len(stderr) > 0: raise RuntimeError(adjust_error_string(stderr))
         return parse_7z_result(stdout, fname)
 
-def make_job(fname, exe7z):
+
+class CsoInfoJob:
+    def __init__(self, args):
+        self.job = Popen(args, errors='replace', stdin=PIPE, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+
+    def join(self):
+        stdout = self.job.communicate()[0].strip()
+        fname, info = stdout.split(':')
+        if '/' not in info: raise RuntimeError("ERROR: " + stdout + '.')
+        ftype, sizes = info.split(',')[0:2]
+        ftype = ftype.strip()
+        sizes = sizes.strip().split('/')
+        size = int(sizes[0])
+        unpacked = int(sizes[1])
+        saved = unpacked - size
+        saved_percent = model.percent(unpacked, size)
+        return model.ArchiveInfo(fname, size, unpacked, saved, saved_percent, 1, ftype)
+
+
+def make_job(fname, exe7z, execsoinfo):
     if os.path.isdir(fname): return ErrorJob(f"ERROR: {fname} : A directory.")
     if not os.path.isfile(fname): return ErrorJob(f"ERROR: {fname} : File doesn't exist.")
+
+    if fname.endswith('.cso') or fname.endswith('.zso'):
+        try:
+            return CsoInfoJob([execsoinfo, fname])
+        except OSError as e:
+            return ErrorJob(f"ERROR: {fname} : Popen('{execsoinfo}') OSError - {str(e)}")
+
     return SevenJob([exe7z, 'l', '--', fname])

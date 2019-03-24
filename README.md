@@ -2,6 +2,12 @@
 `zipsavings` is a simple Python script/module that uses `subprocess.Popen`
 to invoke `7z l` on each given archive and print stats about it.
 
+It can also invoke (for files with extensions `.cso` and `.zso`) `csoinfo`, which is
+another small tool I made, to print information about `cso` and `zso` files too.
+You can get it from releases here: [FRex/csoinfo](https://github.com/FRex/csoinfo).
+If it's missing you'll get errors for those files but they were also errors before,
+just different ones, since `7z` can't recognize `cso`/`zso`.
+
 ```
 $ zipsavings ./test/dracula.7z ./test/dracula.zip
 archive           |size      |unpacked  |saved     |saved_percent|file_count|type
@@ -58,10 +64,12 @@ export PYTHONPATH='PATH_TO_THIS_REPO'
 python -B -m zipsavings "$@"
 ```
 
-# 7z exe
+# Exes
 
-Use `--7zexe=path` or set env var `ZIPSAVINGS_7ZEXE` to specify the `7z` exe.
-If both are missing the fallback is `C:/mybin/7z.exe` since that's where I keep mine.
+Use `--exe-7z=path` or set env var `ZIPSAVINGS_7ZEXE` to specify the `7z` exe.
+If both are missing the fallback is `C:/mybin/7z.exe` since that's where I happen keep mine.
+Use `--exe-csoinfo=path` or set env var `ZIPSAVINGS_CSOINFOEXE` to specify the `csoinfo` exe.
+If both are missing the fallback is again `C:/mybin/csoinfo.exe`.
 
 
 # Options
@@ -84,6 +92,9 @@ count) for `rar`, `7z`, `zip`, some `exe` (NSIS installers), etc.
 In case of `iso` and `tar` (without additional compression around it) the file
 count is accurate but compression will be slightly negative (see 'Note' about
 output field meanings above).
+
+In case of `cso` and `zso` the file count is set to 1 since they compress a
+single `iso` file each.
 
 In case of `xz` and `gzip` the file count will be 1 (since these aren't archives
 but simple compression layers around single file, just usually used with `tar`)
@@ -130,11 +141,12 @@ ERROR: test/a.bz2 : No size data in bzip2 format.
 ERROR: test/b.notarchive : Can not open the file as archive.
 ERROR: test/dracula-encrypted.7z : Encrypted filenames.
 ERROR: test/dracula.txt : Can not open the file as archive.
+ERROR: test/fake-bad-file.cso: no CISO or ZISO 4 magic bytes.
+ERROR: test/fake-short-file.cso: fread failed = 4.
 ERROR: test/FreeDOS-FD12CD.7z.002 : Headers error, unconfirmed start of archive.
 ERROR: test/FreeDOS-FD12CD.7z.003 : Headers error, unconfirmed start of archive.
 ERROR: test/FreeDOS-FD12CD.7z.004 : Headers error, unconfirmed start of archive.
 ERROR: test/FreeDOS-FD12CD.7z.005 : Headers error, unconfirmed start of archive.
-ERROR: test/FreeDOS-FD12CD.cso : Headers error, unconfirmed start of archive.
 ERROR: test/FreeDOS-FD12CD.zip.002 : Headers error, unconfirmed start of archive.
 ERROR: test/FreeDOS-FD12CD.zip.003 : Headers error, unconfirmed start of archive.
 ERROR: test/FreeDOS-FD12CD.zip.004 : Headers error, unconfirmed start of archive.
@@ -145,7 +157,7 @@ ERROR: test/random10megs.binary : Can not open the file as archive.
 ERROR: test/random10megs.zip.002 : Can not open the file as archive.
 ERROR: test/random10megs.zip.003 : Can not open the file as archive.
 ERROR: test/wat.txt.bz2 : No size data in bzip2 format.
-There were 19 errors.
+There were 20 errors.
 END OF ERRORS.
 
 archive                                |size      |unpacked  |saved      |saved_percent|file_count|type
@@ -166,14 +178,16 @@ test/dracula.zip                       |310.59 KiB|846.86 KiB|536.27 KiB |63.32%
 test/dracula.zip.7z                    |310.74 KiB|310.59 KiB|-149 Bytes |-0.05%       |1         |7z
 test/fixpdfmag.tar.lzma                |1.29 KiB  |10.0 KiB  |8.71 KiB   |87.14%       |1         |lzma
 test/FreeDOS-FD12CD.7z.001             |100.0 MiB |418.45 MiB|318.45 MiB |76.1%        |1         |Split
+test/FreeDOS-FD12CD.cso                |414.6 MiB |418.45 MiB|3.85 MiB   |0.92%        |1         |cso
 test/FreeDOS-FD12CD.zip.001            |100.0 MiB |418.45 MiB|318.45 MiB |76.1%        |1         |Split
+test/FreeDOS-FD12CD.zso                |415.23 MiB|418.45 MiB|3.22 MiB   |0.77%        |1         |zso
 test/random10megs.7z.001               |4.0 MiB   |10.0 MiB  |6.0 MiB    |60.0%        |1         |Split
 test/random10megs.zip.001              |4.0 MiB   |10.0 MiB  |6.0 MiB    |60.0%        |1         |Split
 test/wat.txt.gz                        |1.0 MiB   |1.0 MiB   |-186 Bytes |-0.02%       |1         |gzip
 test/xz.xz                             |492.93 KiB|4.79 MiB  |4.31 MiB   |89.96%       |1         |xz
 ---------------------------------------|----------|----------|-----------|-------------|----------|-----
-TOTAL                                  |2.88 GiB  |4.83 GiB  |1.95 GiB   |40.43%       |1003463   |SUM
-Processed 21 files out of 40 given in 7.358737468719482 seconds.
+TOTAL                                  |3.69 GiB  |5.64 GiB  |1.96 GiB   |34.7%        |1003465   |SUM
+Processed 23 files out of 43 given in 2.8793697357177734 seconds.
 ```
 
 # Efficiency
@@ -187,18 +201,18 @@ with plenty free RAM (for OS to cache into) with `7z.exe` and Python 3 on an SSD
 Running with more cores or without OS caching the exes, code and archives into RAM will give different results
 but the point of `7z` being the bottleneck and Python code being irrelevant still stands.
 
-The above 8 analyzable archives among 11 files takes literally no time to run:
+The above 23 analyzable archives among 43 files takes literally no time to run:
 
 ```
 $ python -m zipsavings test/* -t -s file_count -r --time  2>&1 | tail -n 1
-Processed 8 files out of 11 given in 0.06281304359436035 seconds.
+Processed 23 files out of 43 given in 2.680800676345825 seconds.
 ```
 
 Running it on a very large list of files (MiKTex local package repo) show that `7z` is the real bottleneck:
 
 ```
 $ find D:/MiKTexDownloadFiles -type f | python -m zipsavings --stdin-filelist -t -s file_count -r --time 2>&1 | tail -n 1
-Processed 3463 files out of 3530 given in 15.60750675201416 seconds.
+Processed 3463 files out of 3530 given in 14.103656768798828 seconds.
 ```
 
 Changing code to run and wait for 1 `7z` process at a time (by
@@ -206,7 +220,6 @@ changing `for file_group in split_into_portions(all_files, 8):` to `for file_gro
 causes the tool to take predictably longer:
 
 ```
-$ find D:/MiKTexDownloadFiles -type f  | python -m zipsavings --stdin-filelist -t -s file_count -r  --time 2>&1 | tail
--n 1
-Processed 3463 files out of 3530 given in 50.39897918701172 seconds.
+$ find D:/MiKTexDownloadFiles -type f | python -m zipsavings --stdin-filelist -t -s file_count -r --time 2>&1 | tail -n 1
+Processed 3463 files out of 3530 given in 50.905029296875 seconds.
 ```
