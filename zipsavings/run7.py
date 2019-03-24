@@ -141,6 +141,6 @@ def make_job(fname, exe7z, execsoinfo):
         try:
             return CsoInfoJob([execsoinfo, fname])
         except OSError as e:
-            return ErrorJob(f"ERROR: {fname} : Popen('{execsoinfo}') OSError - {str(e)}")
+            return ErrorJob(f"ERROR: {fname} : Popen('{execsoinfo}') OSError - {str(e)}.")
 
     return SevenJob([exe7z, 'l', '--', fname])

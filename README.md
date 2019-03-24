@@ -109,7 +109,8 @@ In case of `bzip2` (another compression often used with `tar`) an error will be
 printed as `Size` column in `7z l` output is empty (`bz2` file format
 has no header field saying how big the original uncompressed file was).
 
-Some files give **very** unusual results if they confuse `7z` itself.
+Some files give **very** unusual results if they confuse `7z` or `csoinfo`
+itself (or if they were crafted with intention of confusing/misleading them).
 For example, running `zipsavings` on an entire tree of files using `--walk-dir` I
 ran across a `.o` file made by `GHC` (Glasgow Haskell Compiler) on `Windows 10`
 that `7z l` reports as being a bit over `50 TiB` (`54975648497664` bytes,
