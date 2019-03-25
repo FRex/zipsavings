@@ -23,7 +23,7 @@ par.add_argument('--filelist', action='append', default=[], dest='filelists', me
 par.add_argument('--total-only', action='store_true', help='sum the files and print only that')
 par.add_argument('--silent', action='store_true', help='print nothing to stdout')
 par.add_argument('--raw', action='store_true', help='print raw numbers with no pretty printing')
-opts = par.parse_args()
+opts = par.parse_args(sys.argv[1:] or ['-h'])
 
 final_7z_exe = next(filter(None, [opts.exe_7z, os.getenv('ZIPSAVINGS_7ZEXE'), 'C:/mybin/7z.exe']))
 final_csoinfo_exe = next(filter(None, [opts.exe_csoinfo, os.getenv('ZIPSAVINGS_CSOINFOEXE'), 'C:/mybin/csoinfo.exe']))
