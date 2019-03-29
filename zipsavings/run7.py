@@ -95,6 +95,8 @@ def throw_on_password_prompt(job, fname):
         ret.append(x)
         if ret[-len(PASSWORD_PROMPT_LIST):] == PASSWORD_PROMPT_LIST: raise RuntimeError(f"ERROR: {fname} : Encrypted filenames.")
         if ret[-len(dashes):] == dashes: break
+    #fix for Linux where doing jstdout.read causes j.communicate to later return no stdout at all
+    ret.append(job.stdout.read())
     return ''.join(ret)
 
 
