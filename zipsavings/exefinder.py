@@ -1,9 +1,12 @@
 import os
 
 
+PATH_DIR_SEPARATOR= ';' if os.name == 'nt' else ':'
+
+
 def find_exe_in_env_path(exename):
     p = os.getenv('PATH') or ''
-    p = [f"{i}/{exename}" for i in p.split(';')]
+    p = [f"{i}/{exename}" for i in p.split(PATH_DIR_SEPARATOR)]
     p = [i for i in p if os.path.isfile(i)]
     return p
 
