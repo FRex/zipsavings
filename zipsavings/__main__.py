@@ -3,8 +3,7 @@ import sys
 import argparse
 from time import time
 from getopt import gnu_getopt
-from . import model, run7, table
-
+from . import model, run7, table, exefinder
 
 if __name__ != '__main__': raise RuntimeError("This is a script, not a module.")
 
@@ -24,9 +23,7 @@ par.add_argument('--total-only', action='store_true', help='sum the files and pr
 par.add_argument('--silent', action='store_true', help='print nothing to stdout')
 par.add_argument('--raw', action='store_true', help='print raw numbers with no pretty printing')
 opts = par.parse_args(sys.argv[1:] or ['-h'])
-
-final_7z_exe = next(filter(None, [opts.exe_7z, os.getenv('ZIPSAVINGS_7ZEXE'), 'C:/mybin/7z.exe']))
-final_csoinfo_exe = next(filter(None, [opts.exe_csoinfo, os.getenv('ZIPSAVINGS_CSOINFOEXE'), 'C:/mybin/csoinfo.exe']))
+exes = exefinder.find_exes(['7z', 'csoinfo', 'bam'], opts)
 files = list(opts.files)
 
 if opts.stdin_filelist:
@@ -62,7 +59,7 @@ def split_into_portions(data, most):
 
 archive_infos = []
 for file_group in split_into_portions(files, 8):
-    jobs = [run7.make_job(f, exe7z=final_7z_exe, execsoinfo=final_csoinfo_exe) for f in file_group]
+    jobs = [run7.make_job(f, exes) for f in file_group]
     for job in jobs:
         try:
             archive_infos.append(job.join())

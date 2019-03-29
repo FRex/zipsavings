@@ -66,11 +66,19 @@ python -B -m zipsavings "$@"
 
 # Exes
 
-Use `--exe-7z=path` or set env var `ZIPSAVINGS_7ZEXE` to specify the `7z` exe.
-If both are missing the fallback is `C:/mybin/7z.exe` since that's where I happen keep mine.
+`zipsavings` will look through `PATH` environment variable to find `7z` and
+`csoinfo` (both without any extension and with `.exe` extension, on all OSes).
 
-Use `--exe-csoinfo=path` or set env var `ZIPSAVINGS_CSOINFOEXE` to specify the `csoinfo` exe.
-If both are missing the fallback is again `C:/mybin/csoinfo.exe`.
+To make `zipsavings` use other exes than ones found in `PATH` the environment
+variables `ZIPSAVINGS_7ZEXE` and `ZIPSAVINGS_CSOINFOEXE` or command line
+parameters `--exe-7z=` and `--exe-csoinfo=` can be used.
+
+If both command line parameters and environment variables are used to provide
+a path for a given exe then command line parameters take precedence.
+
+It's okay to mix, e.g. let one exe be found in `PATH` but use environment
+variable or command line parameter for the other, or use command line paremeter
+for one of the exes and environment variable for the other one.
 
 
 # Options

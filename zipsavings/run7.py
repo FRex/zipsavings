@@ -133,14 +133,14 @@ class CsoInfoJob:
         return model.ArchiveInfo(fname, size, unpacked, saved, saved_percent, 1, ftype)
 
 
-def make_job(fname, exe7z, execsoinfo):
+def make_job(fname, exes):
     if os.path.isdir(fname): return ErrorJob(f"ERROR: {fname} : A directory.")
     if not os.path.isfile(fname): return ErrorJob(f"ERROR: {fname} : File doesn't exist.")
 
-    if fname.endswith('.cso') or fname.endswith('.zso'):
+    if (fname.endswith('.cso') or fname.endswith('.zso')) and 'csoinfo' in exes:
         try:
-            return CsoInfoJob([execsoinfo, fname])
+            return CsoInfoJob([exes['csoinfo'], fname])
         except OSError as e:
-            return ErrorJob(f"ERROR: {fname} : Popen('{execsoinfo}') OSError - {str(e)}.")
+            return ErrorJob(f"ERROR: {fname} : Popen('{exes['csoinfo']}') OSError - {str(e)}.")
 
-    return SevenJob([exe7z, 'l', '--', fname])
+    return SevenJob([exes['7z'], 'l', '--', fname])
