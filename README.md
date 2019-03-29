@@ -69,6 +69,9 @@ python -B -m zipsavings "$@"
 `zipsavings` will look through `PATH` environment variable to find `7z` and
 `csoinfo` (both without any extension and with `.exe` extension, on all OSes).
 
+When looking for `7z` it'll also look for `7za`, and fallback to it if it's
+found, if both are found then `7z` will be used.
+
 To make `zipsavings` use other exes than ones found in `PATH` the environment
 variables `ZIPSAVINGS_7ZEXE` and `ZIPSAVINGS_CSOINFOEXE` or command line
 parameters `--exe-7z=` and `--exe-csoinfo=` can be used.

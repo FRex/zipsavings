@@ -30,7 +30,9 @@ def find_exes(names, opts):
         elif os.getenv(ename):
             ret[n] = os.getenv(ename)
         else:
-            a = find_exe_in_env_path(n)
-            b = find_exe_in_env_path(n + '.exe')
-            if a or b: ret[n] = (a + b)[0]
+            found = find_exe_in_env_path(n) + find_exe_in_env_path(n + '.exe')
+            if n == '7z': #special case, 7z fallback to 7za
+                found += find_exe_in_env_path('7za')
+                found += find_exe_in_env_path('7za.exe')
+            if found: ret[n] = found[0]
     return ret
