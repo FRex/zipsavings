@@ -20,7 +20,8 @@ def sum_archive_infos(archive_infos):
         total_size += info.size
 
     total_saved_percent = percent(total_unpacked, total_size)
-    return ArchiveInfo('TOTAL', total_size, total_unpacked, total_saved, total_saved_percent, total_file_count, 'SUM')
+    totalname = f"TOTAL({len(archive_infos)})"
+    return ArchiveInfo(totalname, total_size, total_unpacked, total_saved, total_saved_percent, total_file_count, 'SUM')
 
 def binary_size(x):
     if x == 1: return "1 Byte"

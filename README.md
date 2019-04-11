@@ -200,8 +200,8 @@ test/random10megs.zip.001              |4.0 MiB   |10.0 MiB  |6.0 MiB    |60.0% 
 test/wat.txt.gz                        |1.0 MiB   |1.0 MiB   |-186 Bytes |-0.02%       |1         |gzip
 test/xz.xz                             |492.93 KiB|4.79 MiB  |4.31 MiB   |89.96%       |1         |xz
 ---------------------------------------|----------|----------|-----------|-------------|----------|-----
-TOTAL                                  |3.69 GiB  |5.64 GiB  |1.96 GiB   |34.7%        |1003465   |SUM
-Processed 23 files out of 43 given in 2.8793697357177734 seconds.
+TOTAL(23)                              |3.69 GiB  |5.64 GiB  |1.96 GiB   |34.7%        |1003465   |SUM
+Processed 23 files out of 43 given in 2.7812955379486084 seconds.
 ```
 
 
