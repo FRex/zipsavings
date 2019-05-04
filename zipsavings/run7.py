@@ -123,8 +123,8 @@ class CsoInfoJob:
 
     def join(self):
         stdout = self.job.communicate()[0].strip()
-        fname, info = stdout.split(':')
-        if '/' not in info: raise RuntimeError("ERROR: " + stdout + '.')
+        fname, info = stdout.rsplit(':', 1)
+        if '/' not in info or not info.endswith(' byte blocks'): raise RuntimeError("ERROR: " + stdout + '.')
         ftype, sizes = info.split(',')[0:2]
         ftype = ftype.strip()
         sizes = sizes.strip().split('/')
