@@ -89,5 +89,11 @@ else:
 
 if opts.time is not None:
     start_time = opts.time
+    all_count = len(files)
     end_time = time()
-    print(f"Processed {good_count} files out of {len(files)} given in {end_time - start_time} seconds.", file=sys.stderr)
+    timetaken = end_time - start_time
+    good_speed = round(good_count / timetaken, 2)
+    all_speed = round(all_count / timetaken, 2)
+    timetaken = round(timetaken, 3)
+    msg = f"Processed {good_count} files ({good_speed}/s) out of {all_count} given ({all_speed}/s) in {timetaken} seconds."
+    print(msg, file=sys.stderr)
