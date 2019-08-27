@@ -2,10 +2,11 @@ import os
 import sys
 import argparse
 from time import time
-from getopt import gnu_getopt
-from . import model, run7, table, exefinder
+import model, run7, table, exefinder
 
-if __name__ != '__main__': raise RuntimeError("This is a script, not a module.")
+
+if __name__ != '__main__':
+    raise RuntimeError("This is a script, not a module.")
 
 par = argparse.ArgumentParser('zipsavings')
 par.add_argument('-t', '--total', action='store_true', help='sum the files')

@@ -1,7 +1,7 @@
 import os
 
 
-PATH_DIR_SEPARATOR= ';' if os.name == 'nt' else ':'
+PATH_DIR_SEPARATOR = ';' if os.name == 'nt' else ':'
 
 
 def find_exe_in_env_path(exename):

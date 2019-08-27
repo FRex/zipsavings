@@ -53,14 +53,18 @@ how filesystem allocates disk space exactly). Due to this uncompressed formats
 where padding, headers and filenames add more bytes than compression saves
 will show small negative savings.
 
-Best way to run it is to zip up the `zipsavings` directory contents
-and run it directly with python or (to keep tinkering with it) via a help
-script placed in `PATH` like:
+I run it using a bash script named `zipsavings` in my PATH that does
+`python /path/to/my/dir/zipsavings/__main__.py "$@"` (`python` is Python 3).
+If you don't intend to tinker with the code you can instead pack it with
+`python -m zipapp -c zipsavings` and then run the resulting `.pyz` file with
+`python /some/path/zipsavings.pyz` in some batch/bash/sh script in your PATH,
+or pack it into a standalone executable file using some other tool.
 
 ```
-#!/bin/bash
-export PYTHONPATH='PATH_TO_THIS_REPO'
-python -B -m zipsavings "$@"
+$ python zipsavings.pyz zipsavings.pyz
+archive       |size    |unpacked |saved   |saved_percent|file_count|type
+--------------|--------|---------|--------|-------------|----------|----
+zipsavings.pyz|5.34 KiB|13.71 KiB|8.37 KiB|61.07%       |6         |zip
 ```
 
 

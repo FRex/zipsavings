@@ -1,6 +1,6 @@
 import os.path
 from subprocess import Popen, PIPE
-from . import model
+import model
 
 
 def get_type_from_output_lines(lines):
