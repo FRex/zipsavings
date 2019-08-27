@@ -53,20 +53,6 @@ how filesystem allocates disk space exactly). Due to this uncompressed formats
 where padding, headers and filenames add more bytes than compression saves
 will show small negative savings.
 
-I run it using a bash script named `zipsavings` in my PATH that does
-`python /path/to/my/dir/zipsavings/__main__.py "$@"` (`python` is Python 3).
-If you don't intend to tinker with the code you can instead pack it with
-`python -m zipapp -c zipsavings` and then run the resulting `.pyz` file with
-`python /some/path/zipsavings.pyz` in some batch/bash/sh script in your PATH,
-or pack it into a standalone executable file using some other tool.
-
-```
-$ python zipsavings.pyz zipsavings.pyz
-archive       |size    |unpacked |saved   |saved_percent|file_count|type
---------------|--------|---------|--------|-------------|----------|----
-zipsavings.pyz|5.34 KiB|13.71 KiB|8.37 KiB|61.07%       |6         |zip
-```
-
 
 # Exes
 
@@ -146,15 +132,30 @@ with `Can not open the file as archive.` or (sometimes) `Headers error, unconfir
 
 # Example usage
 
+I use `bash` and run `zipsavings` using a bash script named `zipsavings` in my
+`PATH` that does `python /path/to/my/dir/zipsavings/__main__.py "$@"` (`python`
+is Python 3). If you don't intend to tinker with the code you can instead pack
+it with `python -m zipapp -c zipsavings` and then run the resulting `.pyz` file
+with `python /some/path/zipsavings.pyz` in some batch/bash/sh script in your
+`PATH`, or pack it into a standalone executable file using some other tool.
+Adjust the first part of the examples accordingly to your set up.
+
 ```
-$ python -m zipsavings ./test/snek.7z
+$ python zipsavings.pyz zipsavings.pyz
+archive       |size    |unpacked |saved   |saved_percent|file_count|type
+--------------|--------|---------|--------|-------------|----------|----
+zipsavings.pyz|5.34 KiB|13.71 KiB|8.37 KiB|61.07%       |6         |zip
+```
+
+```
+$ zipsavings ./test/snek.7z
 archive       |size      |unpacked|saved     |saved_percent|file_count|type
 --------------|----------|--------|----------|-------------|----------|----
 ./test/snek.7z|484.75 KiB|1.4 MiB |946.87 KiB|66.14%       |6         |7z
 ```
 
 ```
-$ python -m zipsavings --list-dir test --total --sort file_count --reverse --time
+$ zipsavings --list-dir test --total --sort file_count --reverse --time
 ERROR: test/a.bz2 : No size data in bzip2 format.
 ERROR: test/b.notarchive : Can not open the file as archive.
 ERROR: test/dracula-encrypted.7z : Encrypted filenames.
@@ -205,14 +206,13 @@ test/wat.txt.gz                        |1.0 MiB   |1.0 MiB   |-186 Bytes |-0.02%
 test/xz.xz                             |492.93 KiB|4.79 MiB  |4.31 MiB   |89.96%       |1         |xz
 ---------------------------------------|----------|----------|-----------|-------------|----------|-----
 TOTAL(23)                              |3.69 GiB  |5.64 GiB  |1.96 GiB   |34.7%        |1003465   |SUM
-Processed 23 files out of 43 given in 2.7812955379486084 seconds.
+Processed 23 files (7.98/s) out of 43 given (14.92/s) in 2.883 seconds.
 ```
 
 
 # Efficiency
 
-Despite using lots of unoptimized list, tuple and string happy Python 3 code this tool's main
-bottleneck is actual disk access and starting and running `7z` processes themselves (one for each archive given).
+This tool's main bottleneck is actual disk access and starting and running `7z` processes themselves (one for each archive given).
 
 All of the timings below are from repeated runs on a quad core (8 thread) Intel CPU on a laptop
 with plenty free RAM (for OS to cache into) with `7z.exe` and Python 3 on an SSD and archives and this tool's code on an HDD.
@@ -223,15 +223,15 @@ but the point of `7z` being the bottleneck and Python code being irrelevant stil
 The above 23 analyzable archives among 43 files takes literally no time to run:
 
 ```
-$ python -m zipsavings test/* -t -s file_count -r --time  2>&1 | tail -n 1
-Processed 23 files out of 43 given in 2.680800676345825 seconds.
+$ zipsavings test/* -t -s file_count -r --time 2>&1 | tail -n 1
+Processed 23 files (8.69/s) out of 43 given (16.25/s) in 2.646 seconds.
 ```
 
 Running it on a very large list of files (MiKTex local package repo) show that `7z` is the real bottleneck:
 
 ```
-$ find D:/MiKTexDownloadFiles -type f | python -m zipsavings --stdin-filelist -t -s file_count -r --time 2>&1 | tail -n 1
-Processed 3463 files out of 3530 given in 14.103656768798828 seconds.
+$ find D:/MiKTexDownloadFiles -type f | zipsavings --stdin-filelist -t -s file_count -r --time 2>&1 | tail -n 1
+Processed 3463 files (246.79/s) out of 3530 given (251.57/s) in 14.032 seconds.
 ```
 
 Changing code to run and wait for 1 `7z` process at a time (by
@@ -239,6 +239,6 @@ changing `for file_group in split_into_portions(all_files, 8):` to `for file_gro
 causes the tool to take predictably longer:
 
 ```
-$ find D:/MiKTexDownloadFiles -type f | python -m zipsavings --stdin-filelist -t -s file_count -r --time 2>&1 | tail -n 1
-Processed 3463 files out of 3530 given in 50.905029296875 seconds.
+$ find D:/MiKTexDownloadFiles -type f | zipsavings --stdin-filelist -t -s file_count -r --time 2>&1 | tail -n 1
+Processed 3463 files (69.61/s) out of 3530 given (70.96/s) in 49.747 seconds.
 ```

@@ -59,7 +59,7 @@ def split_into_portions(data, most):
     return [data[i:i+most] for i in range(0, len(data), most)]
 
 archive_infos = []
-for file_group in split_into_portions(files, 8):
+for file_group in split_into_portions(files, 1):
     jobs = [run7.make_job(f, exes) for f in file_group]
     for job in jobs:
         try:
@@ -96,5 +96,6 @@ if opts.time is not None:
     good_speed = round(good_count / timetaken, 2)
     all_speed = round(all_count / timetaken, 2)
     timetaken = round(timetaken, 3)
+    sys.stdout.flush() #to avoid problems with 2>&1 redirection to make sure this msg is last
     msg = f"Processed {good_count} files ({good_speed}/s) out of {all_count} given ({all_speed}/s) in {timetaken} seconds."
     print(msg, file=sys.stderr)
