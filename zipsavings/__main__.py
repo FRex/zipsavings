@@ -2,7 +2,7 @@ import os
 import sys
 import argparse
 from time import time
-import model, run7, table, exefinder
+import model, run7, table, exefinder, gzipguess
 
 
 if __name__ != '__main__':
@@ -23,6 +23,7 @@ par.add_argument('--filelist', action='append', default=[], dest='filelists', me
 par.add_argument('--total-only', action='store_true', help='sum the files and print only that')
 par.add_argument('--silent', action='store_true', help='print nothing to stdout')
 par.add_argument('--raw', action='store_true', help='print raw numbers with no pretty printing')
+par.add_argument('--guess-gzip-unpacked', action='store_true', dest='guess_gzip_unpacked', help='guess gzip unpacked size from other files with same unpacked size modulo 2^32')
 opts = par.parse_args(sys.argv[1:] or ['-h'])
 exes = exefinder.find_exes(['7z', 'csoinfo', 'bam'], opts)
 files = list(opts.files)
@@ -73,6 +74,9 @@ if error_count > 0:
     print(f'There were {error_count} errors.', file=sys.stderr)
     print('END OF ERRORS.\n', file=sys.stderr)
     sys.stderr.flush() #to avoid problems with 2>&1 redirection to make sure errors print first
+
+if opts.guess_gzip_unpacked:
+    archive_infos = gzipguess.guess_gzip_infos(archive_infos)
 
 pprinter = (lambda x: x) if opts.raw else model.pretty_print_info_fields
 if opts.total_only:

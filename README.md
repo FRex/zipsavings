@@ -106,6 +106,16 @@ is reported modulo 2^32 due to format limitation so for files that were bigger
 than 4 GiB before compression it'll be inaccurate and report high negative
 savings due to 'unpacked' field being too small).
 
+You can use the option `--guess-gzip-unpacked` to make `zipsavings` try see if
+any other file has the same unpacked size modulo 2^32 as the `gzip` files being
+analyzed, and use that unpacked size for the `gzip` too. This option can be
+useful e.g. when comparing how well did `gzip`, `xz` and `7z` compress the same
+big file. Only `gzip` will have its unpacked size modulo 2^32, so with this
+option all three will have correct unpacked sizes, correct saved amount and
+saved percent, etc. See the example use of it below in examples section. Beware
+of the (very slim) chance of false positive if unrelated file has such
+unpacked size that is same modulo 2^32 to one of the `gzip` files.
+
 In case of `bzip2` (another compression often used with `tar`) an error will be
 printed as `Size` column in `7z l` output is empty (`bz2` file format
 has no header field saying how big the original uncompressed file was).
@@ -152,6 +162,20 @@ $ zipsavings ./test/snek.7z
 archive       |size      |unpacked|saved     |saved_percent|file_count|type
 --------------|----------|--------|----------|-------------|----------|----
 ./test/snek.7z|484.75 KiB|1.4 MiB |946.87 KiB|66.14%       |6         |7z
+```
+
+```
+$ zipsavings zero.data.xz zero.data.gz
+archive     |size     |unpacked |saved     |saved_percent|file_count|type
+------------|---------|---------|----------|-------------|----------|----
+zero.data.xz|2.21 MiB |8.79 GiB |8.79 GiB  |99.98%       |1         |xz
+zero.data.gz|39.26 MiB|808.0 MiB|768.74 MiB|95.14%       |1         |gzip
+
+$ zipsavings zero.data.xz zero.data.gz --guess-gzip-unpacked
+archive     |size     |unpacked|saved   |saved_percent|file_count|type
+------------|---------|--------|--------|-------------|----------|----
+zero.data.xz|2.21 MiB |8.79 GiB|8.79 GiB|99.98%       |1         |xz
+zero.data.gz|39.26 MiB|8.79 GiB|8.75 GiB|99.56%       |1         |gzip
 ```
 
 ```
