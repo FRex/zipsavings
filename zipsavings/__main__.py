@@ -72,6 +72,7 @@ good_count = len(archive_infos)
 if error_count > 0:
     print(f'There were {error_count} errors.', file=sys.stderr)
     print('END OF ERRORS.\n', file=sys.stderr)
+    sys.stderr.flush() #to avoid problems with 2>&1 redirection to make sure errors print first
 
 pprinter = (lambda x: x) if opts.raw else model.pretty_print_info_fields
 if opts.total_only:
