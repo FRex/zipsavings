@@ -25,7 +25,7 @@ par.add_argument('--silent', action='store_true', help='print nothing to stdout'
 par.add_argument('--raw', action='store_true', help='print raw numbers with no pretty printing')
 par.add_argument('--guess-gzip-unpacked', action='store_true', dest='guess_gzip_unpacked', help='guess gzip unpacked size from other files with same unpacked size modulo 2^32')
 opts = par.parse_args(sys.argv[1:] or ['-h'])
-exes = exefinder.find_exes(['7z', 'csoinfo', 'bam'], opts)
+exes = exefinder.find_exes(['7z', 'csoinfo'], opts)
 files = list(opts.files)
 
 if opts.stdin_filelist:
