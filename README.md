@@ -1,5 +1,5 @@
 # zipsavings
-`zipsavings` is a simple Python script/module that uses `subprocess.Popen`
+`zipsavings` is a simple Python script that uses `subprocess.Popen`
 to invoke `7z l` on each given archive and print stats about it.
 
 ```
