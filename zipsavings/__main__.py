@@ -24,6 +24,7 @@ par.add_argument('--total-only', action='store_true', help='sum the files and pr
 par.add_argument('--silent', action='store_true', help='print nothing to stdout')
 par.add_argument('--raw', action='store_true', help='print raw numbers with no pretty printing')
 par.add_argument('--guess-gzip-unpacked', action='store_true', dest='guess_gzip_unpacked', help='guess gzip unpacked size from other files with same unpacked size modulo 2^32')
+par.add_argument('--whitelist-type', metavar='type', action='append', default=[], dest='whitelist', help='only print info about these archive types')
 opts = par.parse_args(sys.argv[1:] or ['-h'])
 exes = exefinder.find_exes(['7z', 'csoinfo'], opts)
 files = list(opts.files)
@@ -77,6 +78,9 @@ if error_count > 0:
 
 if opts.guess_gzip_unpacked:
     archive_infos = gzipguess.guess_gzip_infos(archive_infos)
+
+if opts.whitelist:
+    archive_infos = [a for a in archive_infos if a.type.lower() in opts.whitelist]
 
 pprinter = (lambda x: x) if opts.raw else model.pretty_print_info_fields
 if opts.total_only:

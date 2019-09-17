@@ -112,7 +112,10 @@ analyzed, and use that unpacked size for the `gzip` too. This option can be
 useful e.g. when comparing how well did `gzip`, `xz` and `7z` compress the same
 big file. Only `gzip` will have its unpacked size modulo 2^32, so with this
 option all three will have correct unpacked sizes, correct saved amount and
-saved percent, etc. See the example use of it below in examples section. Beware
+saved percent, etc. To analyze both `xz`/`7z` and `gzip` but print out only
+information about `gzip` files (so the totals are unaffected and the list
+uncluttered) the option `----whitelist-type gzip` can be used.
+See the example use of it below in examples section. Beware
 of the (very slim) chance of false positive if unrelated file has such
 unpacked size that is same modulo 2^32 to one of the `gzip` files.
 
