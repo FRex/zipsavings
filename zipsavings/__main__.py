@@ -62,7 +62,7 @@ def split_into_portions(data, most):
     return [data[i:i+most] for i in range(0, len(data), most)]
 
 archive_infos = []
-for file_group in split_into_portions(files, 1):
+for file_group in split_into_portions(files, 8):
     jobs = [run7.make_job(f, exes) for f in file_group]
     for job in jobs:
         try:
