@@ -16,7 +16,9 @@ par.add_argument('--exe-7z', action='store', help='specify 7z executable to use'
 par.add_argument('--exe-csoinfo', action='store', help='specify csoinfo executable to use')
 par.add_argument('--stdin-filelist', action='store_true', help='read lines from stdin as filenames')
 par.add_argument('--time', action='store_const', const=time(), help='print runtime in seconds to stderr at the end')
-par.add_argument('files', metavar='file', nargs='*', help='archive to scan')
+par.add_argument('files', metavar='file', nargs='*', help='archive to scan', action='append')
+par.add_argument('--file', metavar='file', help='archive to scan', dest='files', action='append')
+par.add_argument('--files', metavar='file', nargs='+', help='archive to scan', dest='files', action='append')
 par.add_argument('--list-dir', action='append', default=[], dest='list_dirs', metavar='dir', help='list dir for files')
 par.add_argument('--walk-dir', action='append', default=[], dest='walk_dirs', metavar='dir', help='walk dir tree for files')
 par.add_argument('--filelist', action='append', default=[], dest='filelists', metavar='filelist', help='file to read as lists of files to scan')
@@ -32,7 +34,6 @@ par.add_argument('--whitelist-type', metavar='type', action='append', default=[]
 par.add_argument('--basenames', action='store_true', help='display basenames of all filenames')
 opts = par.parse_args(sys.argv[1:] or ['-h'])
 exes = exefinder.find_exes(['7z', 'csoinfo'], opts)
-files = list(opts.files)
 
 def flatten(mixedlist):
     ret = []
@@ -43,6 +44,7 @@ def flatten(mixedlist):
             ret.append(elem)
     return ret
 
+files = flatten(opts.files)
 guess_gzip_unpacked_files = flatten(opts.guess_gzip_unpacked_files)
 guess_gzip_unpacked_sizes = flatten(opts.guess_gzip_unpacked_sizes)
 
