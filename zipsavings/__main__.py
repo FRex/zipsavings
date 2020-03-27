@@ -26,11 +26,25 @@ par.add_argument('--raw', action='store_true', help='print raw numbers with no p
 par.add_argument('--guess-gzip-unpacked', action='store_true', dest='guess_gzip_unpacked', help='guess gzip unpacked size from other files with same unpacked size modulo 2^32')
 par.add_argument('--guess-gzip-unpacked-file', action='append', dest='guess_gzip_unpacked_files', help='guess gzip unpacked size from original file sizes modulo 2^32', default=[], metavar='file')
 par.add_argument('--guess-gzip-unpacked-size', action='append', dest='guess_gzip_unpacked_sizes', help='guess gzip unpacked size from original file sizes modulo 2^32', default=[], metavar='size')
+par.add_argument('--guess-gzip-unpacked-files', nargs='+', dest='guess_gzip_unpacked_files', help='guess gzip unpacked size from original file sizes modulo 2^32', default=[], metavar='file', action='append')
+par.add_argument('--guess-gzip-unpacked-sizes', nargs='+', dest='guess_gzip_unpacked_sizes', help='guess gzip unpacked size from original file sizes modulo 2^32', default=[], metavar='size', action='append')
 par.add_argument('--whitelist-type', metavar='type', action='append', default=[], dest='whitelist', help='only print info about these archive types')
 par.add_argument('--basenames', action='store_true', help='display basenames of all filenames')
 opts = par.parse_args(sys.argv[1:] or ['-h'])
 exes = exefinder.find_exes(['7z', 'csoinfo'], opts)
 files = list(opts.files)
+
+def flatten(mixedlist):
+    ret = []
+    for elem in mixedlist:
+        if type(elem) is list:
+            ret.extend(elem)
+        else:
+            ret.append(elem)
+    return ret
+
+guess_gzip_unpacked_files = flatten(opts.guess_gzip_unpacked_files)
+guess_gzip_unpacked_sizes = flatten(opts.guess_gzip_unpacked_sizes)
 
 if opts.stdin_filelist:
     files.extend(filter(None, sys.stdin.read().splitlines()))
@@ -38,7 +52,7 @@ if opts.stdin_filelist:
 error_count = 0
 gzip_unpacked_fsizes = []
 
-for fname in opts.guess_gzip_unpacked_files:
+for fname in guess_gzip_unpacked_files:
     try:
         gzip_unpacked_fsizes.append(os.path.getsize(fname))
     except FileNotFoundError as e:
@@ -51,7 +65,7 @@ def uint(x, base=10):
         raise ValueError(f"argument to uint() evaluated as negative int(): {repr(x)}")
     return ret
 
-for fsize in opts.guess_gzip_unpacked_sizes:
+for fsize in guess_gzip_unpacked_sizes:
     try:
         gzip_unpacked_fsizes.append(uint(fsize, base=0))
     except ValueError as e:
