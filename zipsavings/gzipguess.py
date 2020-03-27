@@ -21,7 +21,6 @@ def adjust_gzip_info(info, unpacked_sizes):
     return model.ArchiveInfo(fname, size, unpacked, saved, saved_percent, file_count, 'gzip')
 
 
-def guess_gzip_infos(infos):
-    unpacked_sizes = [x.unpacked for x in infos]
+def guess_gzip_infos(infos, unpacked_sizes):
     return [adjust_gzip_info(i, unpacked_sizes) for i in infos]
 

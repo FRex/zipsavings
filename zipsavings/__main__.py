@@ -24,6 +24,8 @@ par.add_argument('-T', '--total-only', action='store_true', help='sum the files 
 par.add_argument('--silent', action='store_true', help='print nothing to stdout')
 par.add_argument('--raw', action='store_true', help='print raw numbers with no pretty printing')
 par.add_argument('--guess-gzip-unpacked', action='store_true', dest='guess_gzip_unpacked', help='guess gzip unpacked size from other files with same unpacked size modulo 2^32')
+par.add_argument('--guess-gzip-unpacked-file', action='append', dest='guess_gzip_unpacked_files', help='guess gzip unpacked size from original file sizes modulo 2^32', default=[], metavar='file')
+par.add_argument('--guess-gzip-unpacked-size', action='append', dest='guess_gzip_unpacked_sizes', help='guess gzip unpacked size from original file sizes modulo 2^32', default=[], metavar='size')
 par.add_argument('--whitelist-type', metavar='type', action='append', default=[], dest='whitelist', help='only print info about these archive types')
 par.add_argument('--basenames', action='store_true', help='display basenames of all filenames')
 opts = par.parse_args(sys.argv[1:] or ['-h'])
@@ -34,6 +36,28 @@ if opts.stdin_filelist:
     files.extend(filter(None, sys.stdin.read().splitlines()))
 
 error_count = 0
+gzip_unpacked_fsizes = []
+
+for fname in opts.guess_gzip_unpacked_files:
+    try:
+        gzip_unpacked_fsizes.append(os.path.getsize(fname))
+    except FileNotFoundError as e:
+        error_count += 1
+        print(f"ERROR: {e}.", file=sys.stderr)
+
+def uint(x, base=10):
+    ret = int(x, base=base)
+    if ret < 0:
+        raise ValueError(f"argument to uint() evaluated as negative int(): {repr(x)}")
+    return ret
+
+for fsize in opts.guess_gzip_unpacked_sizes:
+    try:
+        gzip_unpacked_fsizes.append(uint(fsize, base=0))
+    except ValueError as e:
+        error_count += 1
+        print(f"ERROR: {e}.", file=sys.stderr)
+
 for d in opts.list_dirs:
     if os.path.isdir(d):
         files.extend(filter(os.path.isfile, [d + '/' + f for f in os.listdir(d)]))
@@ -78,7 +102,10 @@ if error_count > 0:
     sys.stderr.flush() #to avoid problems with 2>&1 redirection to make sure errors print first
 
 if opts.guess_gzip_unpacked:
-    archive_infos = gzipguess.guess_gzip_infos(archive_infos)
+    gzip_unpacked_fsizes += [x.unpacked for x in archive_infos]
+
+if gzip_unpacked_fsizes:
+    archive_infos = gzipguess.guess_gzip_infos(archive_infos, gzip_unpacked_fsizes)
 
 if opts.whitelist:
     archive_infos = [a for a in archive_infos if a.type.lower() in opts.whitelist]

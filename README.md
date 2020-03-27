@@ -118,6 +118,11 @@ uncluttered) the option `--whitelist-type gzip` can be used.
 See the example use of it below in examples section. Beware
 of the (very slim) chance of false positive if unrelated file has such
 unpacked size that is same modulo 2^32 to one of the `gzip` files.
+`--guess-gzip-unpacked-file` and `--guess-gzip-unpacked-size` can be used to
+pass original unpacked file (only to take size of) or the size itself (as a
+number) respectively to use as extra guesses when guessing unpacked gzip size.
+Without `--guess-gzip-unpacked` the only sizes used in guessing are ones from
+the last two options (unpacked sizes of other files are not considered).
 
 In case of `bzip2` (another compression often used with `tar`) an error will be
 printed as `Size` column in `7z l` output is empty (`bz2` file format
