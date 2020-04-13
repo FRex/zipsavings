@@ -2,10 +2,7 @@ import model
 
 
 def find_size(unpacked, unpacked_sizes):
-    for s in unpacked_sizes:
-        if s != unpacked and s % (2 ** 32) == unpacked:
-            return s
-    return unpacked
+    return next((s for s in unpacked_sizes if s != unpacked and s % (2 ** 32) == unpacked), unpacked)
 
 
 def adjust_gzip_info(info, unpacked_sizes):
