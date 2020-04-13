@@ -1,9 +1,5 @@
 def calculate_fields_widths(infos, headers):
-    ret = [len(h) for h in headers]
-    for info in infos:
-        for i, field in enumerate(info):
-            ret[i] = max(ret[i], len(str(field)))
-    return ret
+    return tuple(max(map(len,column)) for column in zip(headers, *infos))
 
 def make_row(row_data, field_widths):
     return '|'.join(str(r).ljust(w) for r, w in zip(row_data, field_widths))
