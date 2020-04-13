@@ -28,5 +28,16 @@ import pytest
     )
 ))
 def test_calculate_fields_widths(infos, headers, ret):
-    from zipsavings.table import calculate_fields_widths
-    assert calculate_fields_widths(infos, headers) == ret
+    import table
+    assert table.calculate_fields_widths(infos, headers) == ret
+
+
+@pytest.mark.parametrize("unpacked, unpacked_sizes, ret",
+(
+    (1, (1, 2, 2**32+1, 10, 11), 2**32+1),
+    (10, (1, 2, 10), 10),
+    (20, (1, 2), 20)
+))
+def test_gzipguess_find_size(unpacked, unpacked_sizes, ret):
+    import gzipguess
+    assert gzipguess.find_size(unpacked, unpacked_sizes) == ret
