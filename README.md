@@ -86,6 +86,11 @@ due to bash/shell saying argument list is too long to contain all your files.
 
 Use `--walk-dir` or `--list-dir` to walk a dir tree for files or use all files in a dir (but not it's subdirs).
 
+Use `--extensions` to handle unknown types of tars and similar, given that the original file is next to the compressed
+one. For example if you have file compressed with zstandard called `file.tar.zst` and next to it is original `file.tar`
+then with this option sizes of both files are taken and used as compressed and uncompressed size respectively.
+That way any unknown single file compression can be handled (last extension is stripped and used with dot
+as the type of the archive, file count is 1, both files must exist on disk).
 
 # File formats
 

@@ -32,6 +32,7 @@ par.add_argument('--guess-gzip-unpacked-files', nargs='+', dest='guess_gzip_unpa
 par.add_argument('--guess-gzip-unpacked-sizes', nargs='+', dest='guess_gzip_unpacked_sizes', help='guess gzip unpacked size from original file sizes modulo 2^32', default=[], metavar='size', action='append')
 par.add_argument('--whitelist-type', metavar='type', action='append', default=[], dest='whitelist', help='only print info about these archive types')
 par.add_argument('--basenames', action='store_true', help='display basenames of all filenames')
+par.add_argument('--extensions', action='store_true', help="for unknown formats compare size to size of file with same name minus last extension, e.g. .tar.zst will compare to .tar size")
 opts = par.parse_args(sys.argv[1:] or ['-h'])
 exes = exefinder.find_exes(['7z', 'csoinfo'], opts)
 
@@ -104,12 +105,22 @@ def split_into_portions(data, most):
 archive_infos = []
 for file_group in split_into_portions(files, 8):
     jobs = [run7.make_job(f, exes) for f in file_group]
-    for job in jobs:
+    for i, job in enumerate(jobs):
         try:
             archive_infos.append(job.join())
         except RuntimeError as e:
-            error_count += 1
-            print(e, file=sys.stderr)
+            if opts.extensions and str(e).endswith(': Can not open the file as archive.') and '.' in file_group[i]:
+                f = file_group[i]
+                fbase, ext = os.path.splitext(f)
+                try:
+                    info = model.create_solid_info(f, os.path.getsize(f), os.path.getsize(fbase), ext)
+                    archive_infos.append(info)
+                except RuntimeError as e:
+                    error_count += 1
+                    print(e, file=sys.stderr)
+            else:
+                error_count += 1
+                print(e, file=sys.stderr)
 
 good_count = len(archive_infos)
 if error_count > 0:

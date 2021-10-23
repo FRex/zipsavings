@@ -8,6 +8,11 @@ def percent(real, packed):
     saved = real - packed
     return 100 * saved / real
 
+def create_solid_info(archive, size, unpacked, type):
+    saved = unpacked - size
+    saved_percent = percent(unpacked, size)
+    return ArchiveInfo(archive, size, unpacked, saved, saved_percent, 1, type)
+
 def sum_archive_infos(archive_infos):
     total_unpacked = 0
     total_saved = 0
