@@ -118,6 +118,15 @@ for file_group in split_into_portions(files, 8):
                 except RuntimeError as e:
                     error_count += 1
                     print(e, file=sys.stderr)
+                except FileNotFoundError:
+                    # common situation: dir contains file.txt, file.txt.gz and
+                    # file.txt.zst, using --extensions will make it look at
+                    # size of file.txt for size of unpacked file.txt.zst which
+                    # is FINE and intended, but file.txt can't be parsed as
+                    # archive so it will look for file (no extension) which throws
+                    # this exception, so we need to handle it to not miss an error
+                    error_count += 1
+                    print(f"ERROR: {f} : Can not open the file as archive and {fbase} does not exist.", file=sys.stderr)
             else:
                 error_count += 1
                 print(e, file=sys.stderr)
