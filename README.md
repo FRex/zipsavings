@@ -2,7 +2,7 @@
 `zipsavings` is a simple Python script that uses `subprocess.Popen`
 to invoke `7z l` (and others, see `Exes` below) on each given archive and print stats about it.
 
-Robust in the face of errors.
+Robust in the face of errors, does not hang in case `7z` prompts for a password.
 
 ```
 $ zipsavings ./test/dracula.zip ./test/x.tar ./test/x.tar.zst ./test/*.cso ./test/*.7z --time
