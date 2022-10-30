@@ -14,6 +14,7 @@ par.add_argument('-s', '--sort', action='store', help='sort by given field', cho
 par.add_argument('-r', '--reverse', action='store_true', help='reverse the sort')
 par.add_argument('--exe-7z', action='store', help='specify 7z executable to use')
 par.add_argument('--exe-csoinfo', action='store', help='specify csoinfo executable to use')
+par.add_argument('--exe-zstd', action='store', help='specify zstd executable to use')
 par.add_argument('--stdin-filelist', action='store_true', help='read lines from stdin as filenames')
 par.add_argument('--time', action='store_const', const=time(), help='print runtime in seconds to stderr at the end')
 par.add_argument('files', metavar='file', nargs='*', help='archive to scan', action='append')
@@ -34,7 +35,7 @@ par.add_argument('--whitelist-type', metavar='type', action='append', default=[]
 par.add_argument('--basenames', action='store_true', help='display basenames of all filenames')
 par.add_argument('--extensions', action='store_true', help="for unknown formats compare size to size of file with same name minus last extension, e.g. .tar.zst will compare to .tar size")
 opts = par.parse_args(sys.argv[1:] or ['-h'])
-exes = exefinder.find_exes(['7z', 'csoinfo'], opts)
+exes = exefinder.find_exes(['7z', 'csoinfo', 'zstd'], opts)
 
 def flatten(mixedlist):
     ret = []

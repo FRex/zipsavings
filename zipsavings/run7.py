@@ -1,5 +1,5 @@
 import os.path
-from subprocess import Popen, PIPE
+from subprocess import Popen, PIPE, STDOUT
 import model
 
 
@@ -134,6 +134,27 @@ class CsoInfoJob:
         saved_percent = model.percent(unpacked, size)
         return model.ArchiveInfo(fname, size, unpacked, saved, saved_percent, 1, ftype)
 
+class ZstdInfoJob:
+    def __init__(self, zstdexe, fname):
+        self.fname = fname
+        args = [zstdexe, '-v', '-l', fname]
+        self.job = Popen(args, errors='replace', stdin=PIPE, stdout=PIPE, stderr=STDOUT, universal_newlines=True)
+
+    def join(self):
+        stdout = self.job.communicate()[0]
+        if '\nCompressed Size: ' in stdout and '\nDecompressed Size: ' in stdout:
+            stdout = stdout.replace('B)', '').replace('(', ' ')
+            lines = stdout.splitlines()
+            csize = int([line for line in lines if line.startswith('Compressed Size: ')][0].split()[-1])
+            osize = int([line for line in lines if line.startswith('Decompressed Size: ')][0].split()[-1])
+            saved = osize - csize
+            saved_percent = model.percent(osize, csize)
+            return model.ArchiveInfo(self.fname, csize, osize, saved, saved_percent, 1, 'zst')
+        else:
+            stdout = stdout.replace('*** zstd command line interface 64-bits v1.4.8, by Yann Collet ***', '')
+            stdout = stdout.replace('\n\n', '\n').replace('\n', '')
+            raise RuntimeError("ERROR: " + stdout + ".")
+
 
 def make_job(fname, exes):
     if os.path.isdir(fname): return ErrorJob(f"ERROR: {fname} : A directory.")
@@ -144,5 +165,11 @@ def make_job(fname, exes):
             return CsoInfoJob([exes['csoinfo'], fname])
         except OSError as e:
             return ErrorJob(f"ERROR: {fname} : Popen('{exes['csoinfo']}') OSError - {str(e)}.")
+
+    if fname.endswith('.zst') and 'zstd' in exes:
+        try:
+            return ZstdInfoJob(exes['zstd'], fname)
+        except OSError as e:
+            return ErrorJob(f"ERROR: {fname} : Popen('{exes['zstd']}') OSError - {str(e)}.")
 
     return SevenJob([exes['7z'], 'l', '--', fname])

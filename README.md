@@ -1,13 +1,28 @@
 # zipsavings
 `zipsavings` is a simple Python script that uses `subprocess.Popen`
-to invoke `7z l` on each given archive and print stats about it.
+to invoke `7z l` (and others, see `Exes` below) on each given archive and print stats about it.
+
+Robust in the face of errors.
 
 ```
-$ zipsavings ./test/dracula.7z ./test/dracula.zip
-archive           |size      |unpacked  |saved     |saved_percent|file_count|type
-------------------|----------|----------|----------|-------------|----------|----
-./test/dracula.7z |268.38 KiB|846.86 KiB|578.48 KiB|68.31%       |1         |7z
-./test/dracula.zip|310.59 KiB|846.86 KiB|536.27 KiB|63.32%       |1         |zip
+$ zipsavings ./test/dracula.zip ./test/x.tar ./test/x.tar.zst ./test/*.cso ./test/*.7z --time
+ERROR: ./test/fake-bad-file.cso: no CISO or ZISO 4 magic bytes.
+ERROR: ./test/fake-short-file.cso: fread failed = 4.
+ERROR: ./test/dracula-encrypted.7z : Encrypted filenames.
+There were 3 errors.
+END OF ERRORS.
+
+archive                  |size      |unpacked  |saved      |saved_percent|file_count|type
+-------------------------|----------|----------|-----------|-------------|----------|----
+./test/dracula.zip       |310.59 KiB|846.86 KiB|536.27 KiB |63.32%       |1         |zip
+./test/x.tar             |10.0 KiB  |54 Bytes  |-9.95 KiB  |-18862.96%   |2         |tar
+./test/x.tar.zst         |173 Bytes |10.0 KiB  |9.83 KiB   |98.31%       |1         |zst
+./test/FreeDOS-FD12CD.cso|414.6 MiB |418.45 MiB|3.85 MiB   |0.92%        |1         |cso
+./test/dracula.7z        |268.38 KiB|846.86 KiB|578.48 KiB |68.31%       |1         |7z
+./test/dracula.zip.7z    |310.74 KiB|310.59 KiB|-149 Bytes |-0.05%       |1         |7z
+./test/million-files.7z  |6.4 MiB   |5.72 MiB  |-699.06 KiB|-11.93%      |1000000   |7z
+./test/snek.7z           |484.75 KiB|1.4 MiB   |946.87 KiB |66.14%       |6         |7z
+Processed 8 files (3.34/s) out of 11 given (4.6/s) in 2.394 seconds.
 ```
 
 It will also invoke (for files with extensions `.cso` and `.zso`) `csoinfo`, which
@@ -16,6 +31,8 @@ it's missing you'll get errors but before `csoinfo` was made and added to
 `zipsavings` they were also errors since `7z` can't parse `cso`/`zso` files.
 
 You can get `csoinfo` from releases here: [FRex/csoinfo](https://github.com/FRex/csoinfo).
+
+You can get `zstd` from [the official repo](https://github.com/facebook/zstd/releases).
 
 See `Exes` below for how to specify what `7z` and `csoinfo` exe to run.
 
@@ -57,14 +74,14 @@ will show small negative savings.
 # Exes
 
 `zipsavings` will look through `PATH` environment variable to find `7z` and
-`csoinfo` (both without any extension and with `.exe` extension, on all OSes).
+`csoinfo` and `zstd` (both without any extension and with `.exe` extension, on all OSes).
 
 When looking for `7z` it'll also look for `7za`, and fallback to it if it's
 found, if both are found then `7z` will be used.
 
 To make `zipsavings` use other exes than ones found in `PATH` the environment
-variables `ZIPSAVINGS_7ZEXE` and `ZIPSAVINGS_CSOINFOEXE` or command line
-parameters `--exe-7z=` and `--exe-csoinfo=` can be used.
+variables `ZIPSAVINGS_7ZEXE` and `ZIPSAVINGS_CSOINFOEXE` and `ZIPSAVINGS_ZSTDEXE`
+or command line parameters `--exe-7z=` and `--exe-csoinfo=` and `--exe-zstd=` can be used.
 
 If both command line parameters and environment variables are used to provide
 a path for a given exe then command line parameters take precedence.
